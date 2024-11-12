@@ -2,7 +2,7 @@ import secrets from "../secrets.json";
 
 // Setup
 
-const githubBearerToken = secrets.github_token
+const githubBearerToken = secrets.github_bearer_token
 const labelSelectMenu = document.getElementById("labels-select-menu")
 const translationLabel = labelSelectMenu.parentElement.querySelector("a[data-name=has_translations]")
 
