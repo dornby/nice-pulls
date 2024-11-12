@@ -1,0 +1,26 @@
+{
+
+  "name": "Nice Pulls",
+  "description": "Auto formats my Github PRs",
+  "icons": {
+    "32": "icons/32.png",
+    "72": "icons/72.png",
+    "128": "icons/128.png",
+    "512": "icons/512.png"
+  },
+  "version": "1.0",
+  "manifest_version": 3,
+  "content_scripts": [
+    {
+      "matches": ["https://github.com/drivy/drivy-rails/compare/*"],
+      "js": ["javascript/compare.js"],
+      "run_at": "document_end"
+    },
+    {
+      "matches": ["https://github.com/drivy/drivy-rails/pull/*"],
+      "js": ["javascript/pull.js"],
+      "type": "module",
+      "run_at": "document_end"
+    }
+  ]
+}
