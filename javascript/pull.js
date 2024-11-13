@@ -1,8 +1,11 @@
-import secrets from "../secrets.json";
-
 // Setup
 
-const githubBearerToken = secrets.github_bearer_token
+const url = chrome.runtime.getURL("secrets.json");
+
+fetch(url)
+  .then((response) => response.json())
+  .then((json) => { githubBearerToken = json.github_bearer_token });
+
 const labelSelectMenu = document.getElementById("labels-select-menu")
 const translationLabel = labelSelectMenu.parentElement.querySelector("a[data-name=has_translations]")
 
