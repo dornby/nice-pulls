@@ -39,13 +39,19 @@ function waitForElement(selector, timeout = 5000) {
 }
 
 async function onPaste() {
-  const textArea = document.getElementsByName("pull_request[body]")[0];
-  const hasLyriqBranchLink = textArea.value.includes("[Lyriq Branch](https://github.com/drivy/drivy-rails/pull/");
-
   setTimeout(async () => {
+    // Get fresh reference to textarea after paste has processed
+    const textArea = document.getElementsByName("pull_request[body]")[0];
+    if (!textArea) return;
+
+    const hasLyriqBranchLink = textArea.value.includes("[Lyriq Branch](https://github.com/drivy/drivy-rails/pull/");
+
     if (hasLyriqBranchLink && !translationLabelIsAdded) {
       await addLabel("has_translations");
       translationLabelIsAdded = true;
+
+      // Update the Lyriq status to "In progress"
+      updateLyriqStatusInTextArea(textArea, STATUS_PATTERNS.IN_PROGRESS);
     }
   }, 500);
 }

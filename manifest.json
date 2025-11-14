@@ -33,6 +33,7 @@
         "javascript/shared/label-manager.js",
         "javascript/shared/specs-calculator.js",
         "javascript/shared/commit-utils.js",
+        "javascript/shared/status-updater.js",
         "javascript/pull.js"
       ],
       "run_at": "document_end"

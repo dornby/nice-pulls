@@ -10,20 +10,20 @@
  */
 function featureText(specsPercentage, joinedCommitTitles = '') {
   return `## Links
-  📝   [PRD]()
-  ♌️   [Lyriq Branch]() | _Not yet started_ 👻
-  🎨   [Figma]()
-  🪸   [Deep Dive]()
-  💬   [Slack]()
-  🐛   [Bugsnag]()
+  📝   [PRD]()
+  ♌️   [Lyriq Branch]() | _Not yet started_ 👻
+  🎨   [Figma]()
+  🪸   [Deep Dive]()
+  💬   [Slack]()
+  🐛   [Bugsnag]()
 
 ## Timeline
 * Previous PR: _None_
 * Followup PR: _None_
 
 ## Review Guide
-  🪜   Commit by commit
-  🌈   _${specsPercentage}% of the diff is specs_
+  🪜   Commit by commit
+  🌈   _${specsPercentage}% of the diff is specs_
 
 ## Context
 
