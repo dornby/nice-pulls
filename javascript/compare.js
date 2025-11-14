@@ -9,7 +9,6 @@ const commitsArray = Array.from(commits)
 const commitTitles = commitsArray.map(commit => commit.text)
 const joinedCommitTitles = commitTitles.join("\n### ")
 var translationLabelIsAdded = false
-var listeningForFormatPrButtonSecondClick = false
 
 // Create format button
 actionBar.insertAdjacentHTML('afterbegin', createPrButton.outerHTML)
@@ -52,29 +51,43 @@ formatPrButton.addEventListener('click', onFormatPrButtonClick)
 // Listen to inputs in the textArea
 textArea.addEventListener('input',  onTextAreaInput)
 
+// featureText()
+function featureText(specsPercentage) {
+  var newText = ""
+  newText += `## Links\n  📝   [PRD]()\n  ♌️   [Lyriq Branch]() | _Not yet started_ 👻\n  🎨   [Figma]()\n  🪸   [Deep Dive]()\n  💬   [Slack]()\n  🐛   [Bugsnag]()\n\n`
+  newText += `## Timeline\n* Previous PR: _None_\n* Followup PR: _None_\n\n`
+  newText += `## Review Guide\n  🪜   Commit by commit\n  🌈   _${specsPercentage}% of the diff is specs_\n\n`
+  newText += `## Context\n\n`
+  newText += `## Implementation\n\n`
+  newText += `## Commits\n### ${joinedCommitTitles}\n\n`
+  newText += `## Screens\n| Before | After |\n| --- | --- |\n| <img src=""> | <img src=""> |\n| <video src=""> | <video src=""> |`
+  return newText
+}
+
+// translationsText()
+function translationsText() {
+  var newText = ""
+  newText += `> [!NOTE]\n> _This PR will not be merged onto main, it's sole purpose is to receive Lyriq translations. The Lyriq commits will then be cherry-picked in the feature branch._\n\n`
+  newText += `## Links\n👑  [Feature Branch]()\n💬  [Slack]()\n♌️  [Lyriq job]()\n\n`
+  newText += `## Completion\n- [x] 🇬🇧\n- [ ] 🇫🇷\n- [ ] 🇳🇴\n- [ ] 🇩🇪\n- [ ] 🇪🇸\n- [ ] 🇧🇪\n`
+  return newText
+}
+
 // onFormatPrButtonClick()
 function onFormatPrButtonClick() {
-  listeningForFormatPrButtonSecondClick = false
+  const branchName = document.getElementById('head-ref-selector').querySelector('.Button-label').children[1].innerText
 
-  textArea.value = newText(specsPercentage())
+  if (branchName.includes('translations/')) {
+    textArea.value = translationsText()
+  } else {
+    textArea.value = featureText(specsPercentage())
+  }
+
   textArea.style.height = "350px"
-
   titleInput.focus()
   titleInput.setSelectionRange(0, 0)
 
   assignYourselfInput.click()
-
-  function newText(specsPercentage) {
-    var newText = ""
-    newText += `## Links\n  📝   [PRD]()\n  ♌️   [Lyriq Branch]() | _Not yet started_ 👻\n  🎨   [Figma]()\n  🪸   [Deep Dive]()\n  💬   [Slack]()\n  🐛   [Bugsnag]()\n\n`
-    newText += `## Timeline\n* Previous PR: _None_\n* Followup PR: _None_\n\n`
-    newText += `## Review Guide\n  🪜   Commit by commit\n  🌈   _${specsPercentage}% of the diff is specs_\n\n`
-    newText += `## Context\n\n`
-    newText += `## Implementation\n\n`
-    newText += `## Commits\n### ${joinedCommitTitles}\n\n`
-    newText += `## Screens\n| Before | After |\n| --- | --- |\n| <img src=""> | <img src=""> |\n| <video src=""> | <video src=""> |`
-    return newText
-  }
 }
 
 function specsPercentage() {
