@@ -1,0 +1,40 @@
+/**
+ * Label management utilities for GitHub PR labels
+ */
+
+const LABEL_CLICK_DELAY = 500; // ms to wait for label menu to open/close
+
+/**
+ * Adds a label to the current PR
+ * @param {string} labelName - The data-label-name attribute value
+ * @returns {Promise<void>}
+ */
+async function addLabel(labelName) {
+  const labelsSelectWheel = document.getElementById("labels-select-menu").children[0];
+
+  return new Promise((resolve) => {
+    labelsSelectWheel.click();
+
+    setTimeout(() => {
+      const labelInput = document.querySelector(`input[data-label-name='${labelName}']`);
+      if (labelInput) {
+        labelInput.click();
+      }
+      labelsSelectWheel.click();
+      resolve();
+    }, LABEL_CLICK_DELAY);
+  });
+}
+
+/**
+ * Checks if a label is already added to the PR
+ * @param {string} labelName - The data-name attribute value
+ * @returns {boolean} True if label is present
+ */
+function hasLabel(labelName) {
+  const labelSelectMenu = document.getElementById("labels-select-menu");
+  if (!labelSelectMenu) return false;
+
+  const label = labelSelectMenu.parentElement.querySelector(`a[data-name="${labelName}"]`);
+  return !!label;
+}

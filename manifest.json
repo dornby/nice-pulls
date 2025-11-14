@@ -13,13 +13,28 @@
   "content_scripts": [
     {
       "matches": ["https://github.com/drivy/drivy-rails/compare/*"],
-      "js": ["javascript/compare.js"],
+      "js": [
+        "javascript/shared/dom-utils.js",
+        "javascript/shared/github-api.js",
+        "javascript/shared/templates.js",
+        "javascript/shared/label-manager.js",
+        "javascript/shared/specs-calculator.js",
+        "javascript/shared/commit-utils.js",
+        "javascript/compare.js"
+      ],
       "run_at": "document_end"
     },
     {
       "matches": ["https://github.com/drivy/drivy-rails/pull/*"],
-      "js": ["javascript/pull.js"],
-      "type": "module",
+      "js": [
+        "javascript/shared/dom-utils.js",
+        "javascript/shared/github-api.js",
+        "javascript/shared/templates.js",
+        "javascript/shared/label-manager.js",
+        "javascript/shared/specs-calculator.js",
+        "javascript/shared/commit-utils.js",
+        "javascript/pull.js"
+      ],
       "run_at": "document_end"
     }
   ],
