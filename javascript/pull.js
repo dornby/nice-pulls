@@ -42,25 +42,51 @@ async function updateFeaturePR(pullID) {
 
 document.addEventListener('paste', onPaste);
 
-// Create refresh description button
-const actions = document.querySelector(".gh-header-actions");
-const editButton = actions.children[0];
-const refreshButtonGroup = createStyledButton(editButton, "Refresh desc", async () => {
-  const pullID = getPullRequestId();
-  const branchName = getBranchName('pull');
-  const isTranslationBranch = branchName.includes('translations/');
-
-  if (isTranslationBranch) {
-    await updateTranslationsPR(pullID);
-  } else {
-    await updateFeaturePR(pullID);
+function initRefreshButton() {
+  const actions = document.querySelector(".gh-header-actions");
+  if (!actions || actions.querySelector('[data-nice-pulls-refresh]')) {
+    return; // Already initialized or element not ready
   }
+
+  const editButton = actions.children[0];
+  if (!editButton) return;
+
+  const refreshButtonGroup = createStyledButton(editButton, "Refresh desc", async () => {
+    const pullID = getPullRequestId();
+    const branchName = getBranchName('pull');
+    const isTranslationBranch = branchName.includes('translations/');
+
+    if (isTranslationBranch) {
+      await updateTranslationsPR(pullID);
+    } else {
+      await updateFeaturePR(pullID);
+    }
+  });
+
+  const refreshButton = refreshButtonGroup.children[0];
+  refreshButton.ariaLabel = null;
+  refreshButton.dataset.gaClick = null;
+  refreshButton.dataset.nicePullsRefresh = "true"; // Mark as initialized
+  refreshButton.classList.remove("js-details-target", "js-title-edit-button");
+  refreshButton.classList.add("Button--secondary", "Button--small", "Button", "m-0", "mr-md-0");
+
+  actions.insertAdjacentElement('afterbegin', refreshButtonGroup);
+}
+
+// Initialize immediately
+initRefreshButton();
+
+// Also watch for dynamic content changes (GitHub SPA navigation)
+// Use debouncing to avoid excessive checks
+let initTimeout;
+const observer = new MutationObserver(() => {
+  clearTimeout(initTimeout);
+  initTimeout = setTimeout(initRefreshButton, 100);
 });
 
-const refreshButton = refreshButtonGroup.children[0];
-refreshButton.ariaLabel = null;
-refreshButton.dataset.gaClick = null;
-refreshButton.classList.remove("js-details-target", "js-title-edit-button");
-refreshButton.classList.add("Button--secondary", "Button--small", "Button", "m-0", "mr-md-0");
-
-actions.insertAdjacentElement('afterbegin', refreshButtonGroup);
+// Only observe the main container, not the entire body
+const mainContent = document.querySelector('main') || document.body;
+observer.observe(mainContent, {
+  childList: true,
+  subtree: false // Don't watch deeply nested changes
+});
