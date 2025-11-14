@@ -184,7 +184,7 @@ function onFormatSubmit(format) {
       }
 
       if (document.getElementById("screens-checkbox").checked) {
-        newText += `## Screens\n### Before\n### After\n`
+        newText += `## Screens\n| Before | After |\n| --- | --- |\n| <img src=""> | <img src=""> |\n| <video src=""> | <video src=""> |`
       }
 
       return newText

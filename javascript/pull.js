@@ -184,6 +184,7 @@ refreshButton.innerHTML = "Refresh desc"
 refreshButton.ariaLabel = null
 refreshButton.dataset.gaClick = null
 refreshButton.classList.remove("js-details-target", "js-title-edit-button")
+refreshButton.classList.add("Button--secondary", "Button--small", "Button", "m-0", "mr-md-0")
 
 refreshButton.style.backgroundColor = "#670070"
 refreshButton.style.borderColor = "#670070"
