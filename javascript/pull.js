@@ -80,9 +80,16 @@ async function updateFeaturePR(pullID) {
   const commits = await fetchPRCommits(pullID);
   updatedContent = replaceCommitsWith(commits, updatedContent);
 
-  // Check if all locales are present and update status to Done
   if (areAllLocalesPresent(files)) {
     updatedContent = updateLyriqStatus(updatedContent, STATUS_PATTERNS.DONE);
+
+    if (hasLabel("has_translations")) {
+      await swapLabels("has_translations", "translations_done");
+      await new Promise(resolve => setTimeout(resolve, 300));
+    } else if (!hasLabel("translations_done")) {
+      await addLabel("translations_done");
+      await new Promise(resolve => setTimeout(resolve, 300));
+    }
   }
 
   textArea.value = updatedContent;

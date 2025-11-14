@@ -17,9 +17,40 @@ async function addLabel(labelName) {
 
     setTimeout(() => {
       const labelInput = document.querySelector(`input[data-label-name='${labelName}']`);
-      if (labelInput) {
+      if (labelInput && !labelInput.checked) {
         labelInput.click();
       }
+      labelsSelectWheel.click();
+      resolve();
+    }, LABEL_CLICK_DELAY);
+  });
+}
+
+/**
+ * Swaps one label for another in a single operation
+ * @param {string} labelToRemove - The data-label-name attribute value to remove
+ * @param {string} labelToAdd - The data-label-name attribute value to add
+ * @returns {Promise<void>}
+ */
+async function swapLabels(labelToRemove, labelToAdd) {
+  const labelsSelectWheel = document.getElementById("labels-select-menu").children[0];
+
+  return new Promise((resolve) => {
+    labelsSelectWheel.click();
+
+    setTimeout(() => {
+      // Remove the old label
+      const removeInput = document.querySelector(`input[data-label-name='${labelToRemove}']`);
+      if (removeInput && removeInput.checked) {
+        removeInput.click();
+      }
+
+      // Add the new label
+      const addInput = document.querySelector(`input[data-label-name='${labelToAdd}']`);
+      if (addInput && !addInput.checked) {
+        addInput.click();
+      }
+
       labelsSelectWheel.click();
       resolve();
     }, LABEL_CLICK_DELAY);
