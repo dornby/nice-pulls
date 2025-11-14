@@ -38,6 +38,45 @@ function onPaste(_event) {
   }, 500);
 }
 
+function checkLocaleBoxes(files) {
+  const textArea = document.getElementsByName("pull_request[body]")[0]
+  const localeFiles = files.filter((file) => file.filename.startsWith("config/locales/") && file.status !== "removed")
+
+  const localeMap = {
+    "en.yml": "🇬🇧",
+    "fr.yml": "🇫🇷",
+    "nb_NO.yml": "🇳🇴",
+    "de.yml": "🇩🇪",
+    "es.yml": "🇪🇸",
+    "nl_BE.yml": "🇧🇪"
+  }
+
+  const completionText = "## Completion\n"
+  const splitContent = textArea.textContent.split(completionText)
+  var newContent = splitContent[0] + completionText
+
+  Object.entries(localeMap).forEach(([fileName, flag]) => {
+    debugger;
+    if (localeFiles.find((file) => file.filename.endsWith(fileName))) {
+      newContent += `- [x] ${flag}\n`
+    } else {
+      newContent += `- [ ] ${flag}\n`
+    }
+  })
+
+  textArea.textContent = newContent.replace(/\n$/, '')
+}
+
+function fetchFilesAndCheckLocaleBoxes(pullID) {
+  return fetch(`https://api.github.com/repos/drivy/drivy-rails/pulls/${pullID}/files?page=0`, {
+    headers: {
+      Authorization: `Bearer ${githubBearerToken}`,
+    }
+  })
+    .then((response) => response.json())
+    .then((files) => { checkLocaleBoxes(files) })
+}
+
 function fetchFilesAndReplaceSpecsWithPercentage(pullID, page, presentFiles = []) {
   return fetch(`https://api.github.com/repos/drivy/drivy-rails/pulls/${pullID}/files?page=${page}`, {
     headers: {
@@ -97,6 +136,7 @@ function replaceSpecsWith(specsPercentage) {
 
 function replaceCommitsWith(commits, textAreaContent) {
   const textArea = document.getElementsByName("pull_request[body]")[0]
+
   if (textAreaContent) {
     const hasCommitsTitle = textAreaContent.includes("## Commits")
     const splitContent = textAreaContent.split("## Commits")
@@ -199,6 +239,11 @@ refreshButton.addEventListener('mouseleave', () => {
 
 refreshButton.addEventListener("click", () => {
   const pullID = window.location.href.split("pull/")[1]
+  const branchName = document.getElementsByClassName("head-ref")[0].title
 
-  fetchFilesAndReplaceSpecsWithPercentage(pullID, 1)
+  if (branchName.includes('translations/')) {
+    fetchFilesAndCheckLocaleBoxes(pullID)
+  } else {
+    fetchFilesAndReplaceSpecsWithPercentage(pullID, 1)
+  }
 })
