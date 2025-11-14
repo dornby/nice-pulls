@@ -8,6 +8,7 @@ const commits = document.querySelectorAll(".Link--primary.text-bold.js-navigatio
 const commitsArray = Array.from(commits)
 const commitTitles = commitsArray.map(commit => commit.text)
 const joinedCommitTitles = commitTitles.join("\n### ")
+const labelsSelectWheel = document.getElementById("labels-select-menu").children[0]
 var translationLabelIsAdded = false
 
 // Create format button
@@ -79,6 +80,16 @@ function onFormatPrButtonClick() {
 
   if (branchName.includes('translations/')) {
     textArea.value = translationsText()
+    titleInput.value = "♌️ "
+
+    labelsSelectWheel.click()
+
+    setTimeout(function(){
+      const pendingTranslationsLabel = document.querySelector("input[data-label-name='lyriq']")
+
+      pendingTranslationsLabel.click()
+      labelsSelectWheel.click()
+    }, 500);
   } else {
     textArea.value = featureText(specsPercentage())
   }
@@ -119,12 +130,10 @@ function specsPercentage() {
 // onTextAreaInput()
 function onTextAreaInput() {
   if (textArea.value.includes("[Lyriq Branch](https://github.com/drivy/drivy-rails/pull/") && !translationLabelIsAdded) {
-    const labelsSelectWheel = document.getElementById("labels-select-menu").children[0]
-
     labelsSelectWheel.click()
 
     setTimeout(function(){
-      const pendingTranslationsLabel = document.querySelector("input[data-label-name='pending-translations']")
+      const pendingTranslationsLabel = document.querySelector("input[data-label-name='has_translations']")
 
       pendingTranslationsLabel.click()
       labelsSelectWheel.click()
