@@ -8,6 +8,8 @@
 const STATUS_PATTERNS = {
   NOT_YET_STARTED: { text: '_Not yet started_', emoji: '👻' },
   IN_PROGRESS: { text: '_In progress_', emoji: '⏳' },
+  DONE: { text: '_Done_', emoji: '✅' },
+  BLOCKED: { text: '_Blocked_', emoji: '🚫' }
 };
 
 /**
@@ -28,6 +30,30 @@ function updateLyriqStatus(content, newStatus) {
   const newLine = `♌️   [Lyriq Branch](${url}) | ${newStatus.text} ${newStatus.emoji}`;
 
   return content.replace(lyriqLineRegex, newLine);
+}
+
+/**
+ * Checks if all required locales are present in the files
+ * @param {Array} files - Array of file objects from GitHub API
+ * @returns {boolean} True if all locales are present
+ */
+function areAllLocalesPresent(files) {
+  const localeFiles = files.filter(
+    file => file.filename.startsWith("config/locales/") && file.status !== "removed"
+  );
+
+  const requiredLocales = [
+    "en.yml",
+    "fr.yml",
+    "nb_NO.yml",
+    "de.yml",
+    "es.yml",
+    "nl_BE.yml"
+  ];
+
+  return requiredLocales.every(locale =>
+    localeFiles.some(file => file.filename.endsWith(locale))
+  );
 }
 
 /**

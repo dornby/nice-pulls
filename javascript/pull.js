@@ -75,10 +75,17 @@ async function updateFeaturePR(pullID) {
   const files = await fetchAllPRFiles(pullID);
   const specsPercentage = calculateSpecsPercentageFromFiles(files);
   const textArea = getTextArea();
-  const updatedContent = replaceSpecsPercentage(textArea.value, specsPercentage);
+  let updatedContent = replaceSpecsPercentage(textArea.value, specsPercentage);
 
   const commits = await fetchPRCommits(pullID);
-  textArea.value = replaceCommitsWith(commits, updatedContent);
+  updatedContent = replaceCommitsWith(commits, updatedContent);
+
+  // Check if all locales are present and update status to Done
+  if (areAllLocalesPresent(files)) {
+    updatedContent = updateLyriqStatus(updatedContent, STATUS_PATTERNS.DONE);
+  }
+
+  textArea.value = updatedContent;
 }
 
 document.addEventListener('paste', onPaste);
