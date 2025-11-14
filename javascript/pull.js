@@ -1,13 +1,14 @@
 // Setup
 
 const url = chrome.runtime.getURL("secrets.json");
+const translationsLabel = "has_translations"
 
 fetch(url)
   .then((response) => response.json())
   .then((json) => { githubBearerToken = json.github_bearer_token });
 
 const labelSelectMenu = document.getElementById("labels-select-menu")
-const translationLabel = labelSelectMenu.parentElement.querySelector("a[data-name=has_translations]")
+const translationLabel = labelSelectMenu.parentElement.querySelector(`a[data-name=${translationsLabel}]`)
 
 if (translationLabel) {
   var translationLabelIsAdded = true
@@ -16,26 +17,25 @@ if (translationLabel) {
 }
 
 // onPaste()
-function onPaste(event) {
-  const pastedText = (event.clipboardData || window.clipboardData).getData('text')
+function onPaste(_event) {
+  const textArea = document.getElementsByName("pull_request[body]")[0]
 
-  if (pastedText) {
-    if (pastedText.includes("https://app.phrase.com/") && !translationLabelIsAdded) {
+  setTimeout(function(){
+    if (textArea.value.includes("[Lyriq Branch](https://github.com/drivy/drivy-rails/pull/") && !translationLabelIsAdded) {
       const labelsSelectWheel = document.getElementById("labels-select-menu").children[0]
 
       labelsSelectWheel.click()
 
       setTimeout(function(){
-        const hasTranslationsLabel = document.querySelector("input[data-label-name='has_translations']")
+        const pendingTranslationsLabel = document.querySelector(`input[data-label-name='${translationsLabel}']`)
 
-        if (hasTranslationsLabel) {
-          hasTranslationsLabel.click()
-          labelsSelectWheel.click()
-          translationLabelIsAdded = true
-        }
+        pendingTranslationsLabel.click()
+        labelsSelectWheel.click()
+
+        translationLabelIsAdded = true
       }, 500);
     }
-  }
+  }, 500);
 }
 
 function fetchFilesAndReplaceSpecsWithPercentage(pullID, page, presentFiles = []) {
