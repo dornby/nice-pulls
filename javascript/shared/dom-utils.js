@@ -74,12 +74,37 @@ function getPullRequestId() {
 }
 
 /**
- * Auto-resizes textarea and focuses with cursor at start
+ * Auto-resizes textarea and focuses with cursor at end
  * @param {HTMLElement} textArea - The textarea element
  * @param {HTMLElement} titleInput - The title input element
  */
 function focusAndResizeTextArea(textArea, titleInput) {
   textArea.style.height = "350px";
   titleInput.focus();
-  titleInput.setSelectionRange(0, 0);
+  const length = titleInput.value.length;
+  titleInput.setSelectionRange(length, length);
+}
+
+/**
+ * Selects draft mode for PR creation and updates button styling
+ */
+function selectDraftMode() {
+  const draftRadio = document.getElementById('draft_on');
+  if (draftRadio && !draftRadio.checked) {
+    draftRadio.click();
+
+    // Update the button text and style to reflect draft mode
+    const createPrButton = document.querySelector('.hx_create-pr-button');
+    if (createPrButton) {
+      createPrButton.style.backgroundColor = '#6e7781';
+      createPrButton.style.borderColor = '#6e7781';
+    }
+
+    // Update the dropdown arrow button style
+    const dropdownButton = document.querySelector('.select-menu-button.btn-primary');
+    if (dropdownButton) {
+      dropdownButton.style.backgroundColor = '#6e7781';
+      dropdownButton.style.borderColor = '#6e7781';
+    }
+  }
 }

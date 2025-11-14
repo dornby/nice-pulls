@@ -19,7 +19,7 @@ if (formatPrButtonGroup.children.length > 1) {
 const formatPrButton = formatPrButtonGroup.children[0];
 formatPrButton.innerText = "Auto-format";
 formatPrButton.type = "button";
-formatPrButton.classList.remove("hx_create-pr-button");
+formatPrButton.classList.remove("hx_create-pr-button", "js-sync-select-menu-button");
 
 applyPurpleButtonStyle(formatPrButton);
 
@@ -46,8 +46,14 @@ async function onFormatPrButtonClick() {
     textArea.value = featureText(specsPercentage, joinedCommitTitles);
   }
 
-  focusAndResizeTextArea(textArea, titleInput);
+  selectDraftMode();
   assignYourselfInput.click();
+  focusAndResizeTextArea(textArea, titleInput);
+
+  // Restore Auto-format button text after GitHub's JS runs
+  setTimeout(() => {
+    formatPrButton.innerText = "Auto-format";
+  }, 100);
 }
 
 async function onTextAreaInput() {
