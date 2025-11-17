@@ -3,29 +3,41 @@
  */
 
 /**
- * Calculates the percentage of spec lines in a PR from DOM elements
+ * Generic specs percentage calculator
+ * @param {Array} items - Array of items to calculate from
+ * @param {Function} getChanges - Function to extract changes count from item
+ * @param {Function} getFilename - Function to extract filename from item
  * @returns {number} The percentage (0-100) as an integer
  */
-function calculateSpecsPercentageFromDOM() {
-  const fileInfos = document.querySelectorAll(".file-info");
+function calculateSpecsPercentage(items, getChanges, getFilename) {
   let linesCount = 0;
   let linesSpecCount = 0;
 
-  fileInfos.forEach((fileInfo) => {
-    const truncate = fileInfo.querySelector(".Truncate");
-    const link = truncate.querySelector("a");
-    const diffStats = fileInfo.querySelector(".diffstat");
-    const changesString = diffStats.innerText;
-    const changesInt = parseInt(changesString);
+  items.forEach((item) => {
+    const changes = getChanges(item);
+    const filename = getFilename(item);
 
-    linesCount += changesInt;
-
-    if (link.title.includes("_spec.rb")) {
-      linesSpecCount += changesInt;
+    linesCount += changes;
+    if (filename.includes("_spec.rb")) {
+      linesSpecCount += changes;
     }
   });
 
   return calculatePercentage(linesSpecCount, linesCount);
+}
+
+/**
+ * Calculates the percentage of spec lines in a PR from DOM elements
+ * @returns {number} The percentage (0-100) as an integer
+ */
+function calculateSpecsPercentageFromDOM() {
+  const fileInfos = Array.from(document.querySelectorAll(".file-info"));
+
+  return calculateSpecsPercentage(
+    fileInfos,
+    (fileInfo) => parseInt(fileInfo.querySelector(".diffstat").innerText),
+    (fileInfo) => fileInfo.querySelector(".Truncate a").title
+  );
 }
 
 /**
@@ -34,18 +46,11 @@ function calculateSpecsPercentageFromDOM() {
  * @returns {number} The percentage (0-100) as an integer
  */
 function calculateSpecsPercentageFromFiles(files) {
-  let linesCount = 0;
-  let linesSpecCount = 0;
-
-  files.forEach((file) => {
-    linesCount += file.changes;
-
-    if (file.filename.includes("_spec.rb")) {
-      linesSpecCount += file.changes;
-    }
-  });
-
-  return calculatePercentage(linesSpecCount, linesCount);
+  return calculateSpecsPercentage(
+    files,
+    (file) => file.changes,
+    (file) => file.filename
+  );
 }
 
 /**

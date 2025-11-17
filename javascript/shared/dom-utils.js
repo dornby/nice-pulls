@@ -80,6 +80,72 @@ function getPullRequestId() {
 }
 
 /**
+ * Checks if a branch is a translation branch
+ * @param {string} branchName - The branch name to check
+ * @returns {boolean} True if it's a translation branch
+ */
+function isTranslationBranch(branchName) {
+  return branchName.includes("translations/");
+}
+
+/**
+ * Gets the textarea element for PR body
+ * @returns {HTMLTextAreaElement|null} The textarea element
+ */
+function getTextArea() {
+  return document.getElementById("pull_request_body") ||
+         document.getElementsByName("pull_request[body]")[0];
+}
+
+/**
+ * Updates textarea value and optionally triggers events
+ * @param {string} newValue - New value for textarea
+ * @param {boolean} shouldTriggerEvents - Whether to trigger input/change events
+ */
+function updateTextAreaValue(newValue, shouldTriggerEvents = true) {
+  const textArea = getTextArea();
+  if (!textArea) return;
+
+  textArea.value = newValue;
+
+  if (shouldTriggerEvents) {
+    textArea.dispatchEvent(new Event("input", { bubbles: true }));
+    textArea.dispatchEvent(new Event("change", { bubbles: true }));
+  }
+}
+
+/**
+ * Initializes a function with MutationObserver and optional polling
+ * @param {Function} initFunction - Function to call on initialization and changes
+ * @param {Object} options - Configuration options
+ */
+function initializeWithObserver(initFunction, options = {}) {
+  const {
+    target = document.querySelector("main") || document.body,
+    observerOptions = { childList: true, subtree: false },
+    debounceMs = TIMING.OBSERVER_DEBOUNCE,
+    usePolling = false,
+    pollingInterval = TIMING.POLLING_INTERVAL
+  } = options;
+
+  // Initial call
+  initFunction();
+
+  // Debounced observer
+  let timeout;
+  const observer = new MutationObserver(() => {
+    clearTimeout(timeout);
+    timeout = setTimeout(initFunction, debounceMs);
+  });
+  observer.observe(target, observerOptions);
+
+  // Optional polling fallback
+  if (usePolling) {
+    setInterval(initFunction, pollingInterval);
+  }
+}
+
+/**
  * Auto-resizes textarea and focuses with cursor at end
  * @param {HTMLElement} textArea - The textarea element
  * @param {HTMLElement} titleInput - The title input element

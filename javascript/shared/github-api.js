@@ -21,22 +21,40 @@ async function loadGithubToken() {
 }
 
 /**
+ * Makes an authenticated API call to GitHub
+ * @param {string} endpoint - API endpoint (e.g., '/pulls/123/files')
+ * @param {Object} options - Fetch options
+ * @returns {Promise<Object>} The JSON response
+ */
+async function githubApiCall(endpoint, options = {}) {
+  const token = await loadGithubToken();
+  const url = endpoint.startsWith("http") ? endpoint : `${GITHUB_API_BASE}${endpoint}`;
+
+  const response = await fetch(url, {
+    ...options,
+    headers: {
+      Authorization: `Bearer ${token}`,
+      "Content-Type": "application/json",
+      ...options.headers
+    }
+  });
+
+  if (!response.ok) {
+    const error = await response.json();
+    throw new Error(error.message || `API call failed: ${response.status}`);
+  }
+
+  return response.json();
+}
+
+/**
  * Fetches files from a GitHub PR with pagination support
  * @param {string} pullID - The pull request ID
  * @param {number} page - The page number (1-indexed)
  * @returns {Promise<Array>} Array of file objects
  */
 async function fetchPRFiles(pullID, page = 1) {
-  const token = await loadGithubToken();
-  const response = await fetch(
-    `https://api.github.com/repos/drivy/drivy-rails/pulls/${pullID}/files?page=${page}`,
-    {
-      headers: {
-        Authorization: `Bearer ${token}`,
-      }
-    }
-  );
-  return response.json();
+  return githubApiCall(`/pulls/${pullID}/files?page=${page}`);
 }
 
 /**
@@ -64,16 +82,7 @@ async function fetchAllPRFiles(pullID) {
  * @returns {Promise<Array>} Array of commit objects
  */
 async function fetchPRCommits(pullID) {
-  const token = await loadGithubToken();
-  const response = await fetch(
-    `https://api.github.com/repos/drivy/drivy-rails/pulls/${pullID}/commits`,
-    {
-      headers: {
-        Authorization: `Bearer ${token}`,
-      }
-    }
-  );
-  return response.json();
+  return githubApiCall(`/pulls/${pullID}/commits`);
 }
 
 /**
@@ -85,31 +94,16 @@ async function fetchPRCommits(pullID) {
  * @returns {Promise<Object>} The created PR object
  */
 async function createPullRequest(title, body, head, base) {
-  const token = await loadGithubToken();
-  const response = await fetch(
-    `https://api.github.com/repos/drivy/drivy-rails/pulls`,
-    {
-      method: "POST",
-      headers: {
-        Authorization: `Bearer ${token}`,
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        title,
-        body,
-        head,
-        base,
-        draft: true,
-      }),
-    }
-  );
-
-  if (!response.ok) {
-    const error = await response.json();
-    throw new Error(error.message || `Failed to create PR: ${response.status}`);
-  }
-
-  return response.json();
+  return githubApiCall("/pulls", {
+    method: "POST",
+    body: JSON.stringify({
+      title,
+      body,
+      head,
+      base,
+      draft: true,
+    }),
+  });
 }
 
 /**
@@ -119,25 +113,10 @@ async function createPullRequest(title, body, head, base) {
  * @returns {Promise<Array>} Array of labels on the PR
  */
 async function addLabelToPR(prNumber, label) {
-  const token = await loadGithubToken();
-  const response = await fetch(
-    `https://api.github.com/repos/drivy/drivy-rails/issues/${prNumber}/labels`,
-    {
-      method: "POST",
-      headers: {
-        Authorization: `Bearer ${token}`,
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        labels: [label],
-      }),
-    }
-  );
-
-  if (!response.ok) {
-    const error = await response.json();
-    throw new Error(error.message || `Failed to add label: ${response.status}`);
-  }
-
-  return response.json();
+  return githubApiCall(`/issues/${prNumber}/labels`, {
+    method: "POST",
+    body: JSON.stringify({
+      labels: [label],
+    }),
+  });
 }

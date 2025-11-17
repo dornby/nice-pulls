@@ -24,9 +24,8 @@ function initializeAutoFormatButton() {
 
   // Prefill title for translation branches
   const headBranch = getHeadRefName("compare");
-  const isTranslationBranch = headBranch.includes("translations/");
 
-  if (isTranslationBranch && titleInput) {
+  if (isTranslationBranch(headBranch) && titleInput) {
     titleInput.value = "♌️ ";
     titleInput.focus();
     // Move cursor to end
@@ -64,18 +63,12 @@ function initializeAutoFormatButton() {
 }
 
 // Initialize on page load
-initializeAutoFormatButton();
-
-// Watch for changes to the compare page content (when base/head branch changes)
-const observer = new MutationObserver((mutations) => {
-  initializeAutoFormatButton();
+initializeWithObserver(initializeAutoFormatButton, {
+  target: document.body,
+  observerOptions: { childList: true, subtree: true },
+  usePolling: true,
+  pollingInterval: TIMING.POLLING_INTERVAL
 });
-
-// Observe the document body for any changes
-observer.observe(document.body, { childList: true, subtree: true });
-
-// Also poll periodically as a fallback (GitHub uses Turbo which can be tricky)
-setInterval(initializeAutoFormatButton, 500);
 
 async function onFormatPrButtonClick() {
   try {
@@ -87,7 +80,7 @@ async function onFormatPrButtonClick() {
     const baseBranch = getBaseRefName("compare");
     const headBranch = getHeadRefName("compare");
 
-    const isTranslationBranch = headBranch.includes("translations/");
+    const isBranchTranslation = isTranslationBranch(headBranch);
 
     // Get current elements
     const titleInput = document.getElementById("pull_request_title");
@@ -97,7 +90,7 @@ async function onFormatPrButtonClick() {
     let title = titleInput.value.trim();
     let body;
 
-    if (isTranslationBranch) {
+    if (isBranchTranslation) {
       body = translationsText();
     } else {
       const specsPercentage = calculateSpecsPercentageFromDOM();
@@ -116,7 +109,7 @@ async function onFormatPrButtonClick() {
     const pr = await createPullRequest(title, body, headBranch, baseBranch);
 
     // Add lyriq label for translation branches
-    if (isTranslationBranch) {
+    if (isBranchTranslation) {
       await addLabelToPR(pr.number, "lyriq");
     }
 

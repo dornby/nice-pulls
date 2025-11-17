@@ -1,6 +1,4 @@
 // Initialize
-loadGithubToken();
-
 let translationLabelIsAdded = hasLabel("has_translations");
 
 /**
@@ -41,10 +39,10 @@ function waitForElement(selector, timeout = 5000) {
 async function onPaste() {
   setTimeout(async () => {
     // Get fresh reference to textarea after paste has processed
-    const textArea = document.getElementsByName("pull_request[body]")[0];
+    const textArea = getTextArea();
     if (!textArea) return;
 
-    const hasLyriqBranchLink = textArea.value.includes("[Lyriq Branch](https://github.com/drivy/drivy-rails/pull/");
+    const hasLyriqBranchLink = textArea.value.includes(`[Lyriq Branch](${GITHUB_REPO_URL}/pull/`);
 
     if (hasLyriqBranchLink && !translationLabelIsAdded) {
       await addLabel("has_translations");
@@ -53,7 +51,7 @@ async function onPaste() {
       // Update the Lyriq status to "In progress"
       updateLyriqStatusInTextArea(textArea, STATUS_PATTERNS.IN_PROGRESS);
     }
-  }, 500);
+  }, TIMING.PASTE_DELAY);
 }
 
 function getTextArea() {
@@ -85,10 +83,10 @@ async function updateFeaturePR(pullID) {
 
     if (hasLabel("has_translations")) {
       await swapLabels("has_translations", "translations_done");
-      await new Promise(resolve => setTimeout(resolve, 300));
+      await new Promise(resolve => setTimeout(resolve, TIMING.GITHUB_UI_DELAY));
     } else if (!hasLabel("translations_done")) {
       await addLabel("translations_done");
-      await new Promise(resolve => setTimeout(resolve, 300));
+      await new Promise(resolve => setTimeout(resolve, TIMING.GITHUB_UI_DELAY));
     }
   }
 
@@ -110,7 +108,7 @@ function initRefreshButton() {
     try {
       const pullID = getPullRequestId();
       const branchName = getHeadRefName("pull");
-      const isTranslationBranch = branchName.includes("translations/");
+      const isBranchTranslation = isTranslationBranch(branchName);
 
       // Open the actions menu
       const detailsButton = document.querySelector(".timeline-comment-actions details summary");
@@ -133,7 +131,7 @@ function initRefreshButton() {
       await waitForElement(".js-comment-update", 2000);
 
       // Update the PR description
-      if (isTranslationBranch) {
+      if (isBranchTranslation) {
         await updateTranslationsPR(pullID);
       } else {
         await updateFeaturePR(pullID);
@@ -172,20 +170,5 @@ function initRefreshButton() {
   actions.insertAdjacentElement("afterbegin", refreshButtonGroup);
 }
 
-// Initialize immediately
-initRefreshButton();
-
-// Also watch for dynamic content changes (GitHub SPA navigation)
-// Use debouncing to avoid excessive checks
-let initTimeout;
-const observer = new MutationObserver(() => {
-  clearTimeout(initTimeout);
-  initTimeout = setTimeout(initRefreshButton, 100);
-});
-
-// Only observe the main container, not the entire body
-const mainContent = document.querySelector("main") || document.body;
-observer.observe(mainContent, {
-  childList: true,
-  subtree: false // Don"t watch deeply nested changes
-});
+// Initialize immediately and watch for changes
+initializeWithObserver(initRefreshButton);

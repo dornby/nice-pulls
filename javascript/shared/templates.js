@@ -44,6 +44,10 @@ function featureText(specsPercentage, joinedCommitTitles = "") {
  * @returns {string} The formatted PR description
  */
 function translationsText() {
+  const completionCheckboxes = REQUIRED_LOCALES
+    .map((locale, index) => `- [${index === 0 ? "x" : " "}] ${locale.flag}`)
+    .join("\n");
+
   return `> [!NOTE]
 > _This PR will not be merged onto main, it"s sole purpose is to receive Lyriq translations. The Lyriq commits will then be cherry-picked in the feature branch._
 
@@ -53,25 +57,8 @@ function translationsText() {
 ♌️  [Lyriq job]()
 
 ## Completion
-- [x] 🇬🇧
-- [ ] 🇫🇷
-- [ ] 🇳🇴
-- [ ] 🇩🇪
-- [ ] 🇪🇸
-- [ ] 🇧🇪
+${completionCheckboxes}
 `;
-}
-
-/**
- * Generates the translations PR template
- * @returns {string} The formatted PR description
- */
-function translationsText() {
-  let text = "";
-  text += `> [!NOTE]\n> _This PR will not be merged onto main, it"s sole purpose is to receive Lyriq translations._\n> _The Lyriq commits will then be cherry-picked in the feature branch._\n\n`;
-  text += `## Links\n👑  [Feature Branch]()\n💬  [Slack]()\n♌️  [Lyriq job]()\n\n`;
-  text += `## Completion\n- [x] 🇬🇧\n- [ ] 🇫🇷\n- [ ] 🇳🇴\n- [ ] 🇩🇪\n- [ ] 🇪🇸\n- [ ] 🇧🇪\n`;
-  return text;
 }
 
 /**
@@ -84,17 +71,8 @@ function generateLocaleCompletionText(files) {
     file => file.filename.startsWith("config/locales/") && file.status !== "removed"
   );
 
-  const localeMap = {
-    "en.yml": "🇬🇧",
-    "fr.yml": "🇫🇷",
-    "nb_NO.yml": "🇳🇴",
-    "de.yml": "🇩🇪",
-    "es.yml": "🇪🇸",
-    "nl_BE.yml": "🇧🇪"
-  };
-
-  return Object.entries(localeMap)
-    .map(([fileName, flag]) => {
+  return REQUIRED_LOCALES
+    .map(({ file: fileName, flag }) => {
       const isComplete = localeFiles.some(file => file.filename.endsWith(fileName));
       return `- [${isComplete ? "x" : " "}] ${flag}`;
     })

@@ -2,8 +2,6 @@
  * Label management utilities for GitHub PR labels
  */
 
-const LABEL_CLICK_DELAY = 500; // ms to wait for label menu to open/close
-
 /**
  * Adds a label to the current PR
  * @param {string} labelName - The data-label-name attribute value
@@ -22,7 +20,7 @@ async function addLabel(labelName) {
       }
       labelsSelectWheel.click();
       resolve();
-    }, LABEL_CLICK_DELAY);
+    }, TIMING.LABEL_MENU_DELAY);
   });
 }
 
@@ -53,7 +51,7 @@ async function swapLabels(labelToRemove, labelToAdd) {
 
       labelsSelectWheel.click();
       resolve();
-    }, LABEL_CLICK_DELAY);
+    }, TIMING.LABEL_MENU_DELAY);
   });
 }
 

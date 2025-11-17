@@ -14,6 +14,7 @@
     {
       "matches": ["https://github.com/drivy/drivy-rails/compare/*"],
       "js": [
+        "javascript/shared/constants.js",
         "javascript/shared/dom-utils.js",
         "javascript/shared/github-api.js",
         "javascript/shared/templates.js",
@@ -27,6 +28,7 @@
     {
       "matches": ["https://github.com/drivy/drivy-rails/pull/*"],
       "js": [
+        "javascript/shared/constants.js",
         "javascript/shared/dom-utils.js",
         "javascript/shared/github-api.js",
         "javascript/shared/templates.js",

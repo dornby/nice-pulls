@@ -41,17 +41,8 @@ function areAllLocalesPresent(files) {
     file => file.filename.startsWith("config/locales/") && file.status !== "removed"
   );
 
-  const requiredLocales = [
-    "en.yml",
-    "fr.yml",
-    "nb_NO.yml",
-    "de.yml",
-    "es.yml",
-    "nl_BE.yml"
-  ];
-
-  return requiredLocales.every(locale =>
-    localeFiles.some(file => file.filename.endsWith(locale))
+  return REQUIRED_LOCALES.every(locale =>
+    localeFiles.some(file => file.filename.endsWith(locale.file))
   );
 }
 
