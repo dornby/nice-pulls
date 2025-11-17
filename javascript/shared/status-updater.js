@@ -9,7 +9,6 @@ const STATUS_PATTERNS = {
   NOT_YET_STARTED: { text: "_Not yet started_", emoji: "👻" },
   IN_PROGRESS: { text: "_In progress_", emoji: "⏳" },
   DONE: { text: "_Done_", emoji: "✅" },
-  BLOCKED: { text: "_Blocked_", emoji: "🚫" }
 };
 
 /**
