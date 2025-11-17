@@ -113,6 +113,10 @@ async function onFormatPrButtonClick() {
       await addLabelToPR(pr.number, "lyriq");
     }
 
+    // Assign yourself to the PR
+    const currentUser = await getCurrentUser();
+    await assignUserToPR(pr.number, currentUser.login);
+
     // Redirect to the newly created PR
     window.location.href = pr.html_url;
   } catch (error) {

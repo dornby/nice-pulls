@@ -21,6 +21,25 @@ async function loadGithubToken() {
 }
 
 /**
+ * Gets the current authenticated user
+ * @returns {Promise<Object>} The user object with login, name, etc.
+ */
+async function getCurrentUser() {
+  const token = await loadGithubToken();
+  const response = await fetch("https://api.github.com/user", {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    }
+  });
+
+  if (!response.ok) {
+    throw new Error("Failed to fetch current user");
+  }
+
+  return response.json();
+}
+
+/**
  * Makes an authenticated API call to GitHub
  * @param {string} endpoint - API endpoint (e.g., '/pulls/123/files')
  * @param {Object} options - Fetch options
@@ -117,6 +136,21 @@ async function addLabelToPR(prNumber, label) {
     method: "POST",
     body: JSON.stringify({
       labels: [label],
+    }),
+  });
+}
+
+/**
+ * Assigns a user to a pull request
+ * @param {number} prNumber - The PR number
+ * @param {string} username - The GitHub username to assign
+ * @returns {Promise<Object>} The updated issue object
+ */
+async function assignUserToPR(prNumber, username) {
+  return githubApiCall(`/issues/${prNumber}/assignees`, {
+    method: "POST",
+    body: JSON.stringify({
+      assignees: [username],
     }),
   });
 }
