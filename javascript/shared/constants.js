@@ -16,6 +16,15 @@ const TIMING = {
   POLLING_INTERVAL: 500
 };
 
+// UI Theme constants
+const THEME = {
+  PURPLE_PRIMARY: "#670070",
+  PURPLE_HOVER: "#9800a6"
+};
+
+// PR Description constants
+const COMMIT_BY_COMMIT_LINE = "  🪜   _Commit by commit_";
+
 // Required locales for translation PRs
 const REQUIRED_LOCALES = [
   { file: "en.yml", flag: "🇬🇧" },

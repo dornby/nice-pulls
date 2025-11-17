@@ -10,7 +10,7 @@
  * @returns {string} The formatted PR description
  */
 function featureText(specsPercentage, joinedCommitTitles = "", commitCount = 0) {
-  const commitByCommitLine = commitCount > 1 ? "  🪜   Commit by commit\n" : "";
+  const commitByCommitLine = commitCount > 1 ? `${COMMIT_BY_COMMIT_LINE}\n` : "";
   return `## Links
   📝   [PRD]()
   ♌️   [Lyriq Branch]() | _Not yet started_ 👻
@@ -24,7 +24,7 @@ function featureText(specsPercentage, joinedCommitTitles = "", commitCount = 0) 
 * Followup PR: _None_
 
 ## Review Guide
-${commitByCommitLine}  🌈   _${specsPercentage}% of the diff is specs_
+${commitByCommitLine}  🌈   _${specsPercentage}% of the diff is specs_
 
 ## Context
 
@@ -54,7 +54,7 @@ function translationsText() {
 
 ## Links
   👑   [Feature Branch]()
-  💬     [Slack]()
+  💬   [Slack]()
   ♌️   [Lyriq job]()
 
 ## Completion

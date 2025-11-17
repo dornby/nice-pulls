@@ -30,8 +30,7 @@ function replaceCommitsWith(commits, textAreaContent) {
   }
 
   // Update "Commit by commit" line based on commit count
-  const commitByCommitLine = "  🪜   _Commit by commit_";
-  const hasCommitByCommit = textAreaContent.includes(commitByCommitLine);
+  const hasCommitByCommit = textAreaContent.includes(COMMIT_BY_COMMIT_LINE);
 
   if (commits.length > 1 && !hasCommitByCommit) {
     // Add the line if there are multiple commits and it's not present
@@ -57,11 +56,11 @@ function replaceCommitsWith(commits, textAreaContent) {
           if (nextChar === '\n' || nextChar === '\r') {
             // There's already a blank line, don't add another
             textAreaContent = textAreaContent.slice(0, insertPosition) +
-                              commitByCommitLine +
+                              COMMIT_BY_COMMIT_LINE +
                               textAreaContent.slice(insertPosition);
           } else {
             textAreaContent = textAreaContent.slice(0, insertPosition) +
-                              commitByCommitLine + "\n" +
+                              COMMIT_BY_COMMIT_LINE + "\n" +
                               textAreaContent.slice(insertPosition);
           }
         }
@@ -75,21 +74,19 @@ function replaceCommitsWith(commits, textAreaContent) {
       if (nextChar === '\n' || nextChar === '\r') {
         // There's already a blank line, don't add another
         textAreaContent = textAreaContent.slice(0, insertPosition) +
-                          commitByCommitLine +
+                          COMMIT_BY_COMMIT_LINE +
                           textAreaContent.slice(insertPosition);
       } else {
         textAreaContent = textAreaContent.slice(0, insertPosition) +
-                          commitByCommitLine + "\n" +
+                          COMMIT_BY_COMMIT_LINE + "\n" +
                           textAreaContent.slice(insertPosition);
       }
     }    if (reviewGuideIndex === -1) {
       console.warn("Could not find '## Review Guide' section to insert 'Commit by commit' line");
-      console.log("Searching for:", JSON.stringify("## Review Guide"));
-      console.log("First 500 chars:", JSON.stringify(textAreaContent.substring(0, 500)));
     }
   } else if (commits.length <= 1 && hasCommitByCommit) {
     // Remove the line if there's only one commit and it's present
-    textAreaContent = textAreaContent.replace(commitByCommitLine, "");
+    textAreaContent = textAreaContent.replace(COMMIT_BY_COMMIT_LINE, "");
   }  const splitContent = textAreaContent.split("## Commits");
   const beforeCommitsTitleContent = splitContent[0];
   const afterCommitsTitleContent = splitContent[1];

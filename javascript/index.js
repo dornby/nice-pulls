@@ -22,22 +22,10 @@ function initRefreshAllButton() {
   refreshAllButton.dataset.nicePullsRefreshAll = "true";
 
   // Apply custom styling
-  refreshAllButton.style.backgroundColor = "#670070";
-  refreshAllButton.style.borderColor = "#670070";
+  applyPurpleButtonStyle(refreshAllButton);
   refreshAllButton.style.color = "white";
   refreshAllButton.style.marginLeft = "8px";
   refreshAllButton.style.fontSize = "14px";
-
-  // Hover effects
-  refreshAllButton.addEventListener("mouseenter", () => {
-    refreshAllButton.style.backgroundColor = "#9800a6";
-    refreshAllButton.style.borderColor = "#9800a6";
-  });
-
-  refreshAllButton.addEventListener("mouseleave", () => {
-    refreshAllButton.style.backgroundColor = "#670070";
-    refreshAllButton.style.borderColor = "#670070";
-  });
 
   // Add click handler
   refreshAllButton.addEventListener("click", onRefreshAllClick);

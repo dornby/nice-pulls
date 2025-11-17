@@ -37,15 +37,17 @@ function createStyledButton(sourceButton, buttonText, clickHandler) {
  * @param {HTMLElement} button - Button element to style
  */
 function applyPurpleButtonStyle(button) {
-  button.style.backgroundColor = "#670070";
-  button.style.borderColor = "#670070";
+  button.style.backgroundColor = THEME.PURPLE_PRIMARY;
+  button.style.borderColor = THEME.PURPLE_PRIMARY;
 
   button.addEventListener("mouseenter", () => {
-    button.style.backgroundColor = "#9800a6";
+    button.style.backgroundColor = THEME.PURPLE_HOVER;
+    button.style.borderColor = THEME.PURPLE_HOVER;
   });
 
   button.addEventListener("mouseleave", () => {
-    button.style.backgroundColor = "#670070";
+    button.style.backgroundColor = THEME.PURPLE_PRIMARY;
+    button.style.borderColor = THEME.PURPLE_PRIMARY;
   });
 }
 
@@ -106,7 +108,7 @@ function createLoadingNotification(message, options = {}) {
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
-    background: #670070;
+    background: ${THEME.PURPLE_PRIMARY};
     color: white;
     padding: ${showProgress ? '20px 32px' : '16px 24px'};
     border-radius: 6px;

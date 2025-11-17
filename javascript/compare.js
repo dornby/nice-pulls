@@ -16,7 +16,6 @@ function initializeAutoFormatButton() {
   const existingButton = actionBar.querySelector("[data-nice-pulls-button]");
   if (existingButton) return;
 
-  const textArea = document.getElementById("pull_request_body");
   const titleInput = document.getElementById("pull_request_title");
 
   // Prefill title for translation branches
