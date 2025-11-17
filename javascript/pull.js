@@ -160,18 +160,19 @@ function initRefreshButton() {
 
       // Fetch data from API
       const files = await fetchAllPRFiles(pullID);
-      let updatedBody;
+
+      // Fetch current PR to get body
+      const pr = await githubApiCall(`/pulls/${pullID}`);
+      let updatedBody = pr.body || "";
 
       if (isBranchTranslation) {
         // Update translation completions
-        const textArea = getTextArea();
         const completionText = generateLocaleCompletionText(files);
-        updatedBody = replaceLocaleCompletion(textArea.value, completionText);
+        updatedBody = replaceLocaleCompletion(updatedBody, completionText);
       } else {
         // Update feature PR: specs, commits, and translation status
-        const textArea = getTextArea();
         const specsPercentage = calculateSpecsPercentageFromFiles(files);
-        updatedBody = replaceSpecsPercentage(textArea.value, specsPercentage);
+        updatedBody = replaceSpecsPercentage(updatedBody, specsPercentage);
 
         const commits = await fetchPRCommits(pullID);
         updatedBody = replaceCommitsWith(commits, updatedBody);
