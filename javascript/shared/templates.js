@@ -68,7 +68,7 @@ function translationsText() {
  */
 function translationsText() {
   let text = '';
-  text += `> [!NOTE]\n> _This PR will not be merged onto main, it's sole purpose is to receive Lyriq translations. The Lyriq commits will then be cherry-picked in the feature branch._\n\n`;
+  text += `> [!NOTE]\n> _This PR will not be merged onto main, it's sole purpose is to receive Lyriq translations._\n> _The Lyriq commits will then be cherry-picked in the feature branch._\n\n`;
   text += `## Links\n👑  [Feature Branch]()\n💬  [Slack]()\n♌️  [Lyriq job]()\n\n`;
   text += `## Completion\n- [x] 🇬🇧\n- [ ] 🇫🇷\n- [ ] 🇳🇴\n- [ ] 🇩🇪\n- [ ] 🇪🇸\n- [ ] 🇧🇪\n`;
   return text;
