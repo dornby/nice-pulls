@@ -10,12 +10,12 @@ function initializeAutoFormatButton() {
   if (!createPrButton) return;
 
   // Check if the page is fully loaded (base-ref-selector should exist)
-  const baseRefSelector = document.getElementById('base-ref-selector');
+  const baseRefSelector = document.getElementById("base-ref-selector");
   if (!baseRefSelector) return;
 
   // Check if Auto-format button already exists
   const existingButton = Array.from(actionBar.children).find(
-    child => child.querySelector('button')?.innerText === "Auto-format"
+    child => child.querySelector("button")?.innerText === "Auto-format"
   );
   if (existingButton) return;
 
@@ -23,8 +23,8 @@ function initializeAutoFormatButton() {
   const titleInput = document.getElementById("pull_request_title");
 
   // Prefill title for translation branches
-  const headBranch = getHeadRefName('compare');
-  const isTranslationBranch = headBranch.includes('translations/');
+  const headBranch = getHeadRefName("compare");
+  const isTranslationBranch = headBranch.includes("translations/");
 
   if (isTranslationBranch && titleInput) {
     titleInput.value = "♌️ ";
@@ -34,7 +34,7 @@ function initializeAutoFormatButton() {
   }
 
   // Create format button by cloning the create PR button structure
-  actionBar.insertAdjacentHTML('afterbegin', createPrButton.outerHTML);
+  actionBar.insertAdjacentHTML("afterbegin", createPrButton.outerHTML);
   const formatPrButtonGroup = actionBar.children[0];
 
   // Remove the dropdown if it exists
@@ -55,11 +55,11 @@ function initializeAutoFormatButton() {
   delete formatPrButton.dataset.disableInvalid;
   delete formatPrButton.dataset.disableWith;
 
-  formatPrButton.addEventListener('click', onFormatPrButtonClick);
+  formatPrButton.addEventListener("click", onFormatPrButtonClick);
 
   if (textArea && !textArea.dataset.listenerAdded) {
-    textArea.addEventListener('input', onTextAreaInput);
-    textArea.dataset.listenerAdded = 'true';
+    textArea.addEventListener("input", onTextAreaInput);
+    textArea.dataset.listenerAdded = "true";
   }
 }
 
@@ -84,10 +84,10 @@ async function onFormatPrButtonClick() {
     formatPrButton.disabled = true;
 
     // Get branch information
-    const baseBranch = getBaseRefName('compare');
-    const headBranch = getHeadRefName('compare');
+    const baseBranch = getBaseRefName("compare");
+    const headBranch = getHeadRefName("compare");
 
-    const isTranslationBranch = headBranch.includes('translations/');
+    const isTranslationBranch = headBranch.includes("translations/");
 
     // Get current elements
     const titleInput = document.getElementById("pull_request_title");
@@ -106,7 +106,7 @@ async function onFormatPrButtonClick() {
 
     // Validate title
     if (!title) {
-      alert('Please enter a title for the pull request');
+      alert("Please enter a title for the pull request");
       formatPrButton.innerText = "Auto-format";
       formatPrButton.disabled = false;
       return;
@@ -115,10 +115,15 @@ async function onFormatPrButtonClick() {
     // Create PR via API
     const pr = await createPullRequest(title, body, headBranch, baseBranch);
 
+    // Add lyriq label for translation branches
+    if (isTranslationBranch) {
+      await addLabelToPR(pr.number, "lyriq");
+    }
+
     // Redirect to the newly created PR
     window.location.href = pr.html_url;
   } catch (error) {
-    console.error('Failed to create PR:', error);
+    console.error("Failed to create PR:", error);
     alert(`Failed to create pull request: ${error.message}`);
     formatPrButton.innerText = "Auto-format";
     formatPrButton.disabled = false;
@@ -130,7 +135,7 @@ async function onTextAreaInput() {
   const hasLyriqBranchLink = textArea.value.includes("[Lyriq Branch](https://github.com/drivy/drivy-rails/pull/");
 
   if (hasLyriqBranchLink && !translationLabelIsAdded) {
-    await addLabel('has_translations');
+    await addLabel("has_translations");
     translationLabelIsAdded = true;
   }
 }

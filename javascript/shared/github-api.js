@@ -89,10 +89,10 @@ async function createPullRequest(title, body, head, base) {
   const response = await fetch(
     `https://api.github.com/repos/drivy/drivy-rails/pulls`,
     {
-      method: 'POST',
+      method: "POST",
       headers: {
         Authorization: `Bearer ${token}`,
-        'Content-Type': 'application/json',
+        "Content-Type": "application/json",
       },
       body: JSON.stringify({
         title,
@@ -107,6 +107,36 @@ async function createPullRequest(title, body, head, base) {
   if (!response.ok) {
     const error = await response.json();
     throw new Error(error.message || `Failed to create PR: ${response.status}`);
+  }
+
+  return response.json();
+}
+
+/**
+ * Adds a label to a pull request
+ * @param {number} prNumber - The PR number
+ * @param {string} label - The label name to add
+ * @returns {Promise<Array>} Array of labels on the PR
+ */
+async function addLabelToPR(prNumber, label) {
+  const token = await loadGithubToken();
+  const response = await fetch(
+    `https://api.github.com/repos/drivy/drivy-rails/issues/${prNumber}/labels`,
+    {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${token}`,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        labels: [label],
+      }),
+    }
+  );
+
+  if (!response.ok) {
+    const error = await response.json();
+    throw new Error(error.message || `Failed to add label: ${response.status}`);
   }
 
   return response.json();

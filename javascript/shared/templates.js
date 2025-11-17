@@ -8,7 +8,7 @@
  * @param {string} joinedCommitTitles - Newline-separated commit titles
  * @returns {string} The formatted PR description
  */
-function featureText(specsPercentage, joinedCommitTitles = '') {
+function featureText(specsPercentage, joinedCommitTitles = "") {
   return `## Links
   📝   [PRD]()
   ♌️   [Lyriq Branch]() | _Not yet started_ 👻
@@ -45,7 +45,7 @@ function featureText(specsPercentage, joinedCommitTitles = '') {
  */
 function translationsText() {
   return `> [!NOTE]
-> _This PR will not be merged onto main, it's sole purpose is to receive Lyriq translations. The Lyriq commits will then be cherry-picked in the feature branch._
+> _This PR will not be merged onto main, it"s sole purpose is to receive Lyriq translations. The Lyriq commits will then be cherry-picked in the feature branch._
 
 ## Links
 👑  [Feature Branch]()
@@ -67,8 +67,8 @@ function translationsText() {
  * @returns {string} The formatted PR description
  */
 function translationsText() {
-  let text = '';
-  text += `> [!NOTE]\n> _This PR will not be merged onto main, it's sole purpose is to receive Lyriq translations._\n> _The Lyriq commits will then be cherry-picked in the feature branch._\n\n`;
+  let text = "";
+  text += `> [!NOTE]\n> _This PR will not be merged onto main, it"s sole purpose is to receive Lyriq translations._\n> _The Lyriq commits will then be cherry-picked in the feature branch._\n\n`;
   text += `## Links\n👑  [Feature Branch]()\n💬  [Slack]()\n♌️  [Lyriq job]()\n\n`;
   text += `## Completion\n- [x] 🇬🇧\n- [ ] 🇫🇷\n- [ ] 🇳🇴\n- [ ] 🇩🇪\n- [ ] 🇪🇸\n- [ ] 🇧🇪\n`;
   return text;
@@ -96,7 +96,7 @@ function generateLocaleCompletionText(files) {
   return Object.entries(localeMap)
     .map(([fileName, flag]) => {
       const isComplete = localeFiles.some(file => file.filename.endsWith(fileName));
-      return `- [${isComplete ? 'x' : ' '}] ${flag}`;
+      return `- [${isComplete ? "x" : " "}] ${flag}`;
     })
-    .join('\n') + '\n';
+    .join("\n") + "\n";
 }

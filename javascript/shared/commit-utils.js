@@ -125,5 +125,5 @@ function replaceLocaleCompletion(textAreaContent, completionText) {
   const splitContent = textAreaContent.split(completionTitle);
   const newContent = splitContent[0] + completionTitle + completionText;
 
-  return newContent.replace(/\n$/, '');
+  return newContent.replace(/\n$/, "");
 }

@@ -10,7 +10,7 @@
  * @returns {HTMLElement} The styled button element
  */
 function createStyledButton(sourceButton, buttonText, clickHandler) {
-  const buttonGroup = document.createElement('div');
+  const buttonGroup = document.createElement("div");
   buttonGroup.innerHTML = sourceButton.outerHTML;
 
   const button = buttonGroup.children[0];
@@ -26,7 +26,7 @@ function createStyledButton(sourceButton, buttonText, clickHandler) {
   delete button.dataset.disableWith;
 
   if (clickHandler) {
-    button.addEventListener('click', clickHandler);
+    button.addEventListener("click", clickHandler);
   }
 
   return buttonGroup;
@@ -40,34 +40,34 @@ function applyPurpleButtonStyle(button) {
   button.style.backgroundColor = "#670070";
   button.style.borderColor = "#670070";
 
-  button.addEventListener('mouseenter', () => {
+  button.addEventListener("mouseenter", () => {
     button.style.backgroundColor = "#9800a6";
   });
 
-  button.addEventListener('mouseleave', () => {
+  button.addEventListener("mouseleave", () => {
     button.style.backgroundColor = "#670070";
   });
 }
 
 /**
  * Gets the current branch name from the GitHub UI
- * @param {string} context - 'compare' or 'pull' to determine which selector to use
+ * @param {string} context - "compare" or "pull" to determine which selector to use
  * @returns {string} The branch name
  */
 function getHeadRefName(context) {
-  if (context === 'compare') {
-    return document.getElementById('head-ref-selector')
-      .querySelector('.Button-label')
+  if (context === "compare") {
+    return document.getElementById("head-ref-selector")
+      .querySelector(".Button-label")
       .children[1].innerText;
-  } else if (context === 'pull') {
+  } else if (context === "pull") {
     return document.getElementsByClassName("head-ref")[0].title;
   }
-  return '';
+  return "";
 }
 
 function getBaseRefName(context) {
-  return document.getElementById('base-ref-selector')
-    .querySelector('.Button-label')
+  return document.getElementById("base-ref-selector")
+    .querySelector(".Button-label")
     .children[1].innerText
 };
 
@@ -95,22 +95,22 @@ function focusAndResizeTextArea(textArea, titleInput) {
  * Selects draft mode for PR creation and updates button styling
  */
 function selectDraftMode() {
-  const draftRadio = document.getElementById('draft_on');
+  const draftRadio = document.getElementById("draft_on");
   if (draftRadio && !draftRadio.checked) {
     draftRadio.click();
 
     // Update the button text and style to reflect draft mode
-    const createPrButton = document.querySelector('.hx_create-pr-button');
+    const createPrButton = document.querySelector(".hx_create-pr-button");
     if (createPrButton) {
-      createPrButton.style.backgroundColor = '#6e7781';
-      createPrButton.style.borderColor = '#6e7781';
+      createPrButton.style.backgroundColor = "#6e7781";
+      createPrButton.style.borderColor = "#6e7781";
     }
 
     // Update the dropdown arrow button style
-    const dropdownButton = document.querySelector('.select-menu-button.btn-primary');
+    const dropdownButton = document.querySelector(".select-menu-button.btn-primary");
     if (dropdownButton) {
-      dropdownButton.style.backgroundColor = '#6e7781';
-      dropdownButton.style.borderColor = '#6e7781';
+      dropdownButton.style.backgroundColor = "#6e7781";
+      dropdownButton.style.borderColor = "#6e7781";
     }
   }
 }

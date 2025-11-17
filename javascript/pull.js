@@ -95,11 +95,11 @@ async function updateFeaturePR(pullID) {
   textArea.value = updatedContent;
 }
 
-document.addEventListener('paste', onPaste);
+document.addEventListener("paste", onPaste);
 
 function initRefreshButton() {
   const actions = document.querySelector(".gh-header-actions");
-  if (!actions || actions.querySelector('[data-nice-pulls-refresh]')) {
+  if (!actions || actions.querySelector("[data-nice-pulls-refresh]")) {
     return; // Already initialized or element not ready
   }
 
@@ -109,13 +109,13 @@ function initRefreshButton() {
   const refreshButtonGroup = createStyledButton(editButton, "Refresh desc", async () => {
     try {
       const pullID = getPullRequestId();
-      const branchName = getHeadRefName('pull');
-      const isTranslationBranch = branchName.includes('translations/');
+      const branchName = getHeadRefName("pull");
+      const isTranslationBranch = branchName.includes("translations/");
 
       // Open the actions menu
       const detailsButton = document.querySelector(".timeline-comment-actions details summary");
       if (!detailsButton) {
-        console.error('Details button not found');
+        console.error("Details button not found");
         return;
       }
       detailsButton.click();
@@ -124,7 +124,7 @@ function initRefreshButton() {
       await waitForElement(".js-comment-edit-button", 1000);
       const editButton = document.querySelector(".js-comment-edit-button");
       if (!editButton) {
-        console.error('Edit button not found');
+        console.error("Edit button not found");
         return;
       }
       editButton.click();
@@ -142,8 +142,8 @@ function initRefreshButton() {
       // Trigger input event to let GitHub know the content changed
       const textArea = getTextArea();
       if (textArea) {
-        textArea.dispatchEvent(new Event('input', { bubbles: true }));
-        textArea.dispatchEvent(new Event('change', { bubbles: true }));
+        textArea.dispatchEvent(new Event("input", { bubbles: true }));
+        textArea.dispatchEvent(new Event("change", { bubbles: true }));
       }
 
       // Wait a moment for GitHub to process the changes
@@ -152,13 +152,13 @@ function initRefreshButton() {
       // Click Update comment button
       const updateButton = document.querySelector(".js-comment-update").querySelector("button[type=submit]");
       if (!updateButton) {
-        console.error('Update button not found');
+        console.error("Update button not found");
         return;
       }
       debugger;
       updateButton.click();
     } catch (error) {
-      console.error('Error refreshing description:', error);
+      console.error("Error refreshing description:", error);
     }
   });
 
@@ -169,7 +169,7 @@ function initRefreshButton() {
   refreshButton.classList.remove("js-details-target", "js-title-edit-button");
   refreshButton.classList.add("Button--secondary", "Button--small", "Button", "m-0", "mr-md-0");
 
-  actions.insertAdjacentElement('afterbegin', refreshButtonGroup);
+  actions.insertAdjacentElement("afterbegin", refreshButtonGroup);
 }
 
 // Initialize immediately
@@ -184,8 +184,8 @@ const observer = new MutationObserver(() => {
 });
 
 // Only observe the main container, not the entire body
-const mainContent = document.querySelector('main') || document.body;
+const mainContent = document.querySelector("main") || document.body;
 observer.observe(mainContent, {
   childList: true,
-  subtree: false // Don't watch deeply nested changes
+  subtree: false // Don"t watch deeply nested changes
 });

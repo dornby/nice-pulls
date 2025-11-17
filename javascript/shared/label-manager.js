@@ -16,7 +16,7 @@ async function addLabel(labelName) {
     labelsSelectWheel.click();
 
     setTimeout(() => {
-      const labelInput = document.querySelector(`input[data-label-name='${labelName}']`);
+      const labelInput = document.querySelector(`input[data-label-name="${labelName}"]`);
       if (labelInput && !labelInput.checked) {
         labelInput.click();
       }
@@ -40,13 +40,13 @@ async function swapLabels(labelToRemove, labelToAdd) {
 
     setTimeout(() => {
       // Remove the old label
-      const removeInput = document.querySelector(`input[data-label-name='${labelToRemove}']`);
+      const removeInput = document.querySelector(`input[data-label-name="${labelToRemove}"]`);
       if (removeInput && removeInput.checked) {
         removeInput.click();
       }
 
       // Add the new label
-      const addInput = document.querySelector(`input[data-label-name='${labelToAdd}']`);
+      const addInput = document.querySelector(`input[data-label-name="${labelToAdd}"]`);
       if (addInput && !addInput.checked) {
         addInput.click();
       }
