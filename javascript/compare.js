@@ -14,9 +14,7 @@ function initializeAutoFormatButton() {
   if (!baseRefSelector) return;
 
   // Check if Auto-format button already exists
-  const existingButton = Array.from(actionBar.children).find(
-    child => child.querySelector("button")?.innerText === "Auto-format"
-  );
+  const existingButton = actionBar.querySelector("[data-nice-pulls-button]");
   if (existingButton) return;
 
   const textArea = document.getElementById("pull_request_body");
@@ -45,6 +43,7 @@ function initializeAutoFormatButton() {
   formatPrButton.innerText = "Auto-format";
   formatPrButton.type = "button";
   formatPrButton.classList.remove("hx_create-pr-button", "js-sync-select-menu-button");
+  formatPrButton.dataset.nicePullsButton = "true";
 
   applyPurpleButtonStyle(formatPrButton);
 
