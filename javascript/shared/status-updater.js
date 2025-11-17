@@ -45,16 +45,3 @@ function areAllLocalesPresent(files) {
     localeFiles.some(file => file.filename.endsWith(locale.file))
   );
 }
-
-/**
- * Updates the Lyriq Branch status in the textarea
- * @param {HTMLTextAreaElement} textArea - The PR description textarea
- * @param {Object} newStatus - The new status object from STATUS_PATTERNS
- */
-function updateLyriqStatusInTextArea(textArea, newStatus) {
-  textArea.value = updateLyriqStatus(textArea.value, newStatus);
-
-  // Trigger input events to let GitHub know the content changed
-  textArea.dispatchEvent(new Event("input", { bubbles: true }));
-  textArea.dispatchEvent(new Event("change", { bubbles: true }));
-}

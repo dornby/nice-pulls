@@ -89,29 +89,83 @@ function isTranslationBranch(branchName) {
 }
 
 /**
- * Gets the textarea element for PR body
- * @returns {HTMLTextAreaElement|null} The textarea element
+ * Creates a loading notification with spinner
+ * @param {string} message - Message to display
+ * @param {Object} options - Configuration options
+ * @returns {Object} Object with notification element and update methods
  */
-function getTextArea() {
-  return document.getElementById("pull_request_body") ||
-         document.getElementsByName("pull_request[body]")[0];
-}
+function createLoadingNotification(message, options = {}) {
+  const {
+    showProgress = false,
+    spinnerSize = 16
+  } = options;
 
-/**
- * Updates textarea value and optionally triggers events
- * @param {string} newValue - New value for textarea
- * @param {boolean} shouldTriggerEvents - Whether to trigger input/change events
- */
-function updateTextAreaValue(newValue, shouldTriggerEvents = true) {
-  const textArea = getTextArea();
-  if (!textArea) return;
+  const notification = document.createElement("div");
+  notification.style.cssText = `
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: #670070;
+    color: white;
+    padding: ${showProgress ? '20px 32px' : '16px 24px'};
+    border-radius: 6px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+    z-index: 9999;
+    font-weight: 500;
+    display: flex;
+    ${showProgress ? 'flex-direction: column;' : ''}
+    align-items: center;
+    gap: ${showProgress ? '16px' : '12px'};
+    ${showProgress ? 'min-width: 300px;' : ''}
+  `;
 
-  textArea.value = newValue;
+  const spinnerHTML = `
+    <svg style="animation: spin 1s linear infinite;" width="${spinnerSize}" height="${spinnerSize}" viewBox="0 0 16 16" fill="none">
+      <circle cx="8" cy="8" r="7" stroke="currentColor" stroke-width="2" stroke-dasharray="43.98" stroke-dashoffset="10.99" opacity="0.25"/>
+      <path d="M8 1a7 7 0 0 1 7 7" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+    </svg>
+  `;
 
-  if (shouldTriggerEvents) {
-    textArea.dispatchEvent(new Event("input", { bubbles: true }));
-    textArea.dispatchEvent(new Event("change", { bubbles: true }));
+  if (showProgress) {
+    notification.innerHTML = `
+      <div style="display: flex; align-items: center; gap: 12px;">
+        ${spinnerHTML}
+        <span id="notification-status">${message}</span>
+      </div>
+      <div id="notification-progress" style="font-size: 14px; opacity: 0.9;"></div>
+      <style>
+        @keyframes spin {
+          to { transform: rotate(360deg); }
+        }
+      </style>
+    `;
+  } else {
+    notification.innerHTML = `
+      ${spinnerHTML}
+      <span id="notification-status">${message}</span>
+      <style>
+        @keyframes spin {
+          to { transform: rotate(360deg); }
+        }
+      </style>
+    `;
   }
+
+  document.body.appendChild(notification);
+
+  return {
+    element: notification,
+    updateStatus: (newMessage) => {
+      const statusEl = notification.querySelector("#notification-status");
+      if (statusEl) statusEl.textContent = newMessage;
+    },
+    updateProgress: (progressText) => {
+      const progressEl = notification.querySelector("#notification-progress");
+      if (progressEl) progressEl.textContent = progressText;
+    },
+    remove: () => notification.remove()
+  };
 }
 
 /**
@@ -142,41 +196,5 @@ function initializeWithObserver(initFunction, options = {}) {
   // Optional polling fallback
   if (usePolling) {
     setInterval(initFunction, pollingInterval);
-  }
-}
-
-/**
- * Auto-resizes textarea and focuses with cursor at end
- * @param {HTMLElement} textArea - The textarea element
- * @param {HTMLElement} titleInput - The title input element
- */
-function focusAndResizeTextArea(textArea, titleInput) {
-  textArea.style.height = "350px";
-  titleInput.focus();
-  const length = titleInput.value.length;
-  titleInput.setSelectionRange(length, length);
-}
-
-/**
- * Selects draft mode for PR creation and updates button styling
- */
-function selectDraftMode() {
-  const draftRadio = document.getElementById("draft_on");
-  if (draftRadio && !draftRadio.checked) {
-    draftRadio.click();
-
-    // Update the button text and style to reflect draft mode
-    const createPrButton = document.querySelector(".hx_create-pr-button");
-    if (createPrButton) {
-      createPrButton.style.backgroundColor = "#6e7781";
-      createPrButton.style.borderColor = "#6e7781";
-    }
-
-    // Update the dropdown arrow button style
-    const dropdownButton = document.querySelector(".select-menu-button.btn-primary");
-    if (dropdownButton) {
-      dropdownButton.style.backgroundColor = "#6e7781";
-      dropdownButton.style.borderColor = "#6e7781";
-    }
   }
 }

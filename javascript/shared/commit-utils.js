@@ -29,6 +29,22 @@ function replaceCommitsWith(commits, textAreaContent) {
     return textAreaContent;
   }
 
+  // Update "Commit by commit" line based on commit count
+  const commitByCommitLine = "  🪜   Commit by commit\n";
+  const hasCommitByCommit = textAreaContent.includes(commitByCommitLine);
+
+  if (commits.length > 1 && !hasCommitByCommit) {
+    // Add the line if there are multiple commits and it's not present
+    // Insert before the rainbow specs line
+    textAreaContent = textAreaContent.replace(
+      /## Review Guide\n(  🌈)/,
+      "## Review Guide\n" + commitByCommitLine + "$1"
+    );
+  } else if (commits.length <= 1 && hasCommitByCommit) {
+    // Remove the line if there's only one commit and it's present
+    textAreaContent = textAreaContent.replace(commitByCommitLine, "");
+  }
+
   const splitContent = textAreaContent.split("## Commits");
   const beforeCommitsTitleContent = splitContent[0];
   const afterCommitsTitleContent = splitContent[1];

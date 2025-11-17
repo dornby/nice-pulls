@@ -6,9 +6,11 @@
  * Generates the feature PR template
  * @param {number} specsPercentage - Percentage of specs in the PR
  * @param {string} joinedCommitTitles - Newline-separated commit titles
+ * @param {number} commitCount - Number of commits (to determine if "Commit by commit" should be included)
  * @returns {string} The formatted PR description
  */
-function featureText(specsPercentage, joinedCommitTitles = "") {
+function featureText(specsPercentage, joinedCommitTitles = "", commitCount = 0) {
+  const commitByCommitLine = commitCount > 1 ? "  🪜   Commit by commit\n" : "";
   return `## Links
   📝   [PRD]()
   ♌️   [Lyriq Branch]() | _Not yet started_ 👻
@@ -22,8 +24,7 @@ function featureText(specsPercentage, joinedCommitTitles = "") {
 * Followup PR: _None_
 
 ## Review Guide
-  🪜   Commit by commit
-  🌈   _${specsPercentage}% of the diff is specs_
+${commitByCommitLine}  🌈   _${specsPercentage}% of the diff is specs_
 
 ## Context
 

@@ -1,6 +1,5 @@
 // Setup
 let formatPrButton = null;
-let translationLabelIsAdded = false;
 
 function initializeAutoFormatButton() {
   const actionBar = document.querySelector(".d-flex.my-2.mx-md-2.flex-md-justify-end");
@@ -54,11 +53,6 @@ function initializeAutoFormatButton() {
   delete formatPrButton.dataset.disableWith;
 
   formatPrButton.addEventListener("click", onFormatPrButtonClick);
-
-  if (textArea && !textArea.dataset.listenerAdded) {
-    textArea.addEventListener("input", onTextAreaInput);
-    textArea.dataset.listenerAdded = "true";
-  }
 }
 
 // Initialize on page load
@@ -93,7 +87,8 @@ async function onFormatPrButtonClick() {
       body = translationsText();
     } else {
       const specsPercentage = calculateSpecsPercentageFromDOM();
-      body = featureText(specsPercentage, joinedCommitTitles);
+      const commitCount = joinedCommitTitles ? joinedCommitTitles.split('\n').filter(t => t.trim()).length : 0;
+      body = featureText(specsPercentage, joinedCommitTitles, commitCount);
     }
 
     // Validate title
@@ -125,14 +120,3 @@ async function onFormatPrButtonClick() {
     formatPrButton.disabled = false;
   }
 }
-
-async function onTextAreaInput() {
-  const textArea = document.getElementById("pull_request_body");
-  const hasLyriqBranchLink = textArea.value.includes("[Lyriq Branch](https://github.com/drivy/drivy-rails/pull/");
-
-  if (hasLyriqBranchLink && !translationLabelIsAdded) {
-    await addLabel("has_translations");
-    translationLabelIsAdded = true;
-  }
-}
-

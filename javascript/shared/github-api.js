@@ -179,3 +179,51 @@ async function removeLabelFromPR(prNumber, label) {
     method: "DELETE",
   });
 }
+
+/**
+ * Refreshes a PR's description with updated specs, commits, and translations
+ * @param {number|string} prNumber - The PR number
+ * @returns {Promise<void>}
+ */
+async function refreshPRDescription(prNumber) {
+  // Fetch the PR data
+  const files = await fetchAllPRFiles(prNumber);
+  const commits = await fetchPRCommits(prNumber);
+
+  // Fetch current PR to get body
+  const pr = await githubApiCall(`/pulls/${prNumber}`);
+  const branchName = pr.head.ref;
+  const isBranchTranslation = isTranslationBranch(branchName);
+
+  let updatedBody = pr.body || "";
+
+  if (isBranchTranslation) {
+    // Update translation completions
+    const completionText = generateLocaleCompletionText(files);
+    updatedBody = replaceLocaleCompletion(updatedBody, completionText);
+  } else {
+    // Update feature PR: specs, commits, and translation status
+    const specsPercentage = calculateSpecsPercentageFromFiles(files);
+    updatedBody = replaceSpecsPercentage(updatedBody, specsPercentage);
+    updatedBody = replaceCommitsWith(commits, updatedBody);
+
+    // Check if all locales are present and update status/labels
+    if (areAllLocalesPresent(files)) {
+      updatedBody = updateLyriqStatus(updatedBody, STATUS_PATTERNS.DONE);
+
+      // Get current labels
+      const currentLabels = pr.labels.map(label => label.name);
+
+      // Swap labels via API if needed
+      if (currentLabels.includes("has_translations")) {
+        await removeLabelFromPR(prNumber, "has_translations");
+        await addLabelToPR(prNumber, "translations_done");
+      } else if (!currentLabels.includes("translations_done")) {
+        await addLabelToPR(prNumber, "translations_done");
+      }
+    }
+  }
+
+  // Update PR via API
+  await updatePullRequest(prNumber, { body: updatedBody });
+}
