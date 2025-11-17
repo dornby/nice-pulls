@@ -30,22 +30,67 @@ function replaceCommitsWith(commits, textAreaContent) {
   }
 
   // Update "Commit by commit" line based on commit count
-  const commitByCommitLine = "  🪜   Commit by commit\n";
+  const commitByCommitLine = "  🪜   _Commit by commit_";
   const hasCommitByCommit = textAreaContent.includes(commitByCommitLine);
 
   if (commits.length > 1 && !hasCommitByCommit) {
     // Add the line if there are multiple commits and it's not present
-    // Insert before the rainbow specs line
-    textAreaContent = textAreaContent.replace(
-      /## Review Guide\n(  🌈)/,
-      "## Review Guide\n" + commitByCommitLine + "$1"
-    );
+    // Try multiple variations of the marker to handle different line endings
+    let reviewGuideIndex = textAreaContent.indexOf("## Review Guide\n");
+
+    if (reviewGuideIndex === -1) {
+      // Try with \r\n (Windows line endings)
+      reviewGuideIndex = textAreaContent.indexOf("## Review Guide\r\n");
+    }
+
+    if (reviewGuideIndex === -1) {
+      // Try without newline and find the next newline
+      const guideIndex = textAreaContent.indexOf("## Review Guide");
+      if (guideIndex !== -1) {
+        // Find the first newline after "## Review Guide"
+        const nextNewline = textAreaContent.indexOf("\n", guideIndex);
+        if (nextNewline !== -1) {
+          reviewGuideIndex = guideIndex;
+          const insertPosition = nextNewline + 1; // After the newline
+          // Check if next character is already a newline (we don't want double newlines)
+          const nextChar = textAreaContent[insertPosition];
+          if (nextChar === '\n' || nextChar === '\r') {
+            // There's already a blank line, don't add another
+            textAreaContent = textAreaContent.slice(0, insertPosition) +
+                              commitByCommitLine +
+                              textAreaContent.slice(insertPosition);
+          } else {
+            textAreaContent = textAreaContent.slice(0, insertPosition) +
+                              commitByCommitLine + "\n" +
+                              textAreaContent.slice(insertPosition);
+          }
+        }
+      }
+    } else {
+      // Found with \n, insert after it
+      const reviewGuideMarker = "## Review Guide\n";
+      const insertPosition = reviewGuideIndex + reviewGuideMarker.length;
+      // Check if next character is already a newline
+      const nextChar = textAreaContent[insertPosition];
+      if (nextChar === '\n' || nextChar === '\r') {
+        // There's already a blank line, don't add another
+        textAreaContent = textAreaContent.slice(0, insertPosition) +
+                          commitByCommitLine +
+                          textAreaContent.slice(insertPosition);
+      } else {
+        textAreaContent = textAreaContent.slice(0, insertPosition) +
+                          commitByCommitLine + "\n" +
+                          textAreaContent.slice(insertPosition);
+      }
+    }    if (reviewGuideIndex === -1) {
+      console.warn("Could not find '## Review Guide' section to insert 'Commit by commit' line");
+      console.log("Searching for:", JSON.stringify("## Review Guide"));
+      console.log("First 500 chars:", JSON.stringify(textAreaContent.substring(0, 500)));
+    }
   } else if (commits.length <= 1 && hasCommitByCommit) {
     // Remove the line if there's only one commit and it's present
     textAreaContent = textAreaContent.replace(commitByCommitLine, "");
-  }
-
-  const splitContent = textAreaContent.split("## Commits");
+  }  const splitContent = textAreaContent.split("## Commits");
   const beforeCommitsTitleContent = splitContent[0];
   const afterCommitsTitleContent = splitContent[1];
 

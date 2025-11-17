@@ -13,6 +13,10 @@ async function loadGithubToken() {
     return githubBearerToken;
   }
 
+  if (typeof chrome === 'undefined' || !chrome.runtime) {
+    throw new Error("Chrome extension runtime not available. Please reload the page.");
+  }
+
   const url = chrome.runtime.getURL("secrets.json");
   const response = await fetch(url);
   const json = await response.json();
@@ -205,7 +209,11 @@ async function refreshPRDescription(prNumber) {
     // Update feature PR: specs, commits, and translation status
     const specsPercentage = calculateSpecsPercentageFromFiles(files);
     updatedBody = replaceSpecsPercentage(updatedBody, specsPercentage);
+
+    console.log("Commits count:", commits.length);
+    console.log("Body before replaceCommitsWith:", updatedBody.substring(0, 500));
     updatedBody = replaceCommitsWith(commits, updatedBody);
+    console.log("Body after replaceCommitsWith:", updatedBody.substring(0, 500));
 
     // Check if all locales are present and update status/labels
     if (areAllLocalesPresent(files)) {

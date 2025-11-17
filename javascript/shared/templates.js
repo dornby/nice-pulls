@@ -10,14 +10,14 @@
  * @returns {string} The formatted PR description
  */
 function featureText(specsPercentage, joinedCommitTitles = "", commitCount = 0) {
-  const commitByCommitLine = commitCount > 1 ? "  🪜   Commit by commit\n" : "";
+  const commitByCommitLine = commitCount > 1 ? "  🪜   Commit by commit\n" : "";
   return `## Links
-  📝   [PRD]()
-  ♌️   [Lyriq Branch]() | _Not yet started_ 👻
-  🎨   [Figma]()
-  🪸   [Deep Dive]()
-  💬   [Slack]()
-  🐛   [Bugsnag]()
+  📝   [PRD]()
+  ♌️   [Lyriq Branch]() | _Not yet started_ 👻
+  🎨   [Figma]()
+  🪸   [Deep Dive]()
+  💬   [Slack]()
+  🐛   [Bugsnag]()
 
 ## Timeline
 * Previous PR: _None_
@@ -53,9 +53,9 @@ function translationsText() {
 > _This PR will not be merged onto main, it"s sole purpose is to receive Lyriq translations. The Lyriq commits will then be cherry-picked in the feature branch._
 
 ## Links
-👑  [Feature Branch]()
-💬  [Slack]()
-♌️  [Lyriq job]()
+  👑   [Feature Branch]()
+  💬     [Slack]()
+  ♌️   [Lyriq job]()
 
 ## Completion
 ${completionCheckboxes}
