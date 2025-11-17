@@ -39,6 +39,20 @@
         "javascript/pull.js"
       ],
       "run_at": "document_end"
+    },
+    {
+      "matches": ["https://github.com/drivy/drivy-rails/pulls/assigned/@me"],
+      "js": [
+        "javascript/shared/constants.js",
+        "javascript/shared/dom-utils.js",
+        "javascript/shared/github-api.js",
+        "javascript/shared/templates.js",
+        "javascript/shared/specs-calculator.js",
+        "javascript/shared/commit-utils.js",
+        "javascript/shared/status-updater.js",
+        "javascript/index.js"
+      ],
+      "run_at": "document_end"
     }
   ],
   "web_accessible_resources": [
