@@ -54,7 +54,7 @@ function applyPurpleButtonStyle(button) {
  * @param {string} context - 'compare' or 'pull' to determine which selector to use
  * @returns {string} The branch name
  */
-function getBranchName(context) {
+function getHeadRefName(context) {
   if (context === 'compare') {
     return document.getElementById('head-ref-selector')
       .querySelector('.Button-label')
@@ -64,6 +64,12 @@ function getBranchName(context) {
   }
   return '';
 }
+
+function getBaseRefName(context) {
+  return document.getElementById('base-ref-selector')
+    .querySelector('.Button-label')
+    .children[1].innerText
+};
 
 /**
  * Gets the pull request ID from the current URL

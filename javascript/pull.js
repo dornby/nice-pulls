@@ -109,7 +109,7 @@ function initRefreshButton() {
   const refreshButtonGroup = createStyledButton(editButton, "Refresh desc", async () => {
     try {
       const pullID = getPullRequestId();
-      const branchName = getBranchName('pull');
+      const branchName = getHeadRefName('pull');
       const isTranslationBranch = branchName.includes('translations/');
 
       // Open the actions menu

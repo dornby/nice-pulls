@@ -75,3 +75,39 @@ async function fetchPRCommits(pullID) {
   );
   return response.json();
 }
+
+/**
+ * Creates a new pull request
+ * @param {string} title - The PR title
+ * @param {string} body - The PR description
+ * @param {string} head - The head branch name
+ * @param {string} base - The base branch name
+ * @returns {Promise<Object>} The created PR object
+ */
+async function createPullRequest(title, body, head, base) {
+  const token = await loadGithubToken();
+  const response = await fetch(
+    `https://api.github.com/repos/drivy/drivy-rails/pulls`,
+    {
+      method: 'POST',
+      headers: {
+        Authorization: `Bearer ${token}`,
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        title,
+        body,
+        head,
+        base,
+        draft: true,
+      }),
+    }
+  );
+
+  if (!response.ok) {
+    const error = await response.json();
+    throw new Error(error.message || `Failed to create PR: ${response.status}`);
+  }
+
+  return response.json();
+}
