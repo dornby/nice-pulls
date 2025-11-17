@@ -45,11 +45,56 @@ async function onPaste() {
     const hasLyriqBranchLink = textArea.value.includes(`[Lyriq Branch](${GITHUB_REPO_URL}/pull/`);
 
     if (hasLyriqBranchLink && !translationLabelIsAdded) {
-      await addLabel("has_translations");
-      translationLabelIsAdded = true;
+      try {
+        // Show visual feedback
+        const notification = document.createElement("div");
+        notification.style.cssText = `
+          position: fixed;
+          top: 50%;
+          left: 50%;
+          transform: translate(-50%, -50%);
+          background: #670070;
+          color: white;
+          padding: 16px 24px;
+          border-radius: 6px;
+          box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+          z-index: 9999;
+          font-weight: 500;
+          display: flex;
+          align-items: center;
+          gap: 12px;
+        `;
+        notification.innerHTML = `
+          <svg style="animation: spin 1s linear infinite;" width="16" height="16" viewBox="0 0 16 16" fill="none">
+            <circle cx="8" cy="8" r="7" stroke="currentColor" stroke-width="2" stroke-dasharray="43.98" stroke-dashoffset="10.99" opacity="0.25"/>
+            <path d="M8 1a7 7 0 0 1 7 7" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+          </svg>
+          Updating PR...
+          <style>
+            @keyframes spin {
+              to { transform: rotate(360deg); }
+            }
+          </style>
+        `;
+        document.body.appendChild(notification);
 
-      // Update the Lyriq status to "In progress"
-      updateLyriqStatusInTextArea(textArea, STATUS_PATTERNS.IN_PROGRESS);
+        const pullID = getPullRequestId();
+        const titleInput = document.getElementById("issue_title");
+
+        // Update PR body with current textarea value (with Lyriq status updated)
+        const updatedBody = updateLyriqStatus(textArea.value, STATUS_PATTERNS.IN_PROGRESS);
+        await updatePullRequest(pullID, { body: updatedBody });
+
+        // Add has_translations label via API
+        await addLabelToPR(pullID, "has_translations");
+        translationLabelIsAdded = true;
+
+        // Refresh the page to show changes
+        window.location.reload();
+      } catch (error) {
+        console.error("Error updating PR on paste:", error);
+        alert(`Error updating PR: ${error.message}`);
+      }
     }
   }, TIMING.PASTE_DELAY);
 }
@@ -97,8 +142,11 @@ document.addEventListener("paste", onPaste);
 
 function initRefreshButton() {
   const actions = document.querySelector(".gh-header-actions");
-  if (!actions || actions.querySelector("[data-nice-pulls-refresh]")) {
-    return; // Already initialized or element not ready
+  if (!actions) return; // Element not ready yet
+
+  // Check if button already exists
+  if (actions.querySelector("[data-nice-pulls-refresh]")) {
+    return; // Already initialized
   }
 
   const editButton = actions.children[0];
@@ -110,53 +158,46 @@ function initRefreshButton() {
       const branchName = getHeadRefName("pull");
       const isBranchTranslation = isTranslationBranch(branchName);
 
-      // Open the actions menu
-      const detailsButton = document.querySelector(".timeline-comment-actions details summary");
-      if (!detailsButton) {
-        console.error("Details button not found");
-        return;
-      }
-      detailsButton.click();
+      // Fetch data from API
+      const files = await fetchAllPRFiles(pullID);
+      let updatedBody;
 
-      // Wait for menu to open
-      await waitForElement(".js-comment-edit-button", 1000);
-      const editButton = document.querySelector(".js-comment-edit-button");
-      if (!editButton) {
-        console.error("Edit button not found");
-        return;
-      }
-      editButton.click();
-
-      // Wait for edit form to load
-      await waitForElement(".js-comment-update", 2000);
-
-      // Update the PR description
       if (isBranchTranslation) {
-        await updateTranslationsPR(pullID);
+        // Update translation completions
+        const textArea = getTextArea();
+        const completionText = generateLocaleCompletionText(files);
+        updatedBody = replaceLocaleCompletion(textArea.value, completionText);
       } else {
-        await updateFeaturePR(pullID);
+        // Update feature PR: specs, commits, and translation status
+        const textArea = getTextArea();
+        const specsPercentage = calculateSpecsPercentageFromFiles(files);
+        updatedBody = replaceSpecsPercentage(textArea.value, specsPercentage);
+
+        const commits = await fetchPRCommits(pullID);
+        updatedBody = replaceCommitsWith(commits, updatedBody);
+
+        // Check if all locales are present and update status
+        if (areAllLocalesPresent(files)) {
+          updatedBody = updateLyriqStatus(updatedBody, STATUS_PATTERNS.DONE);
+
+          // Swap labels via API
+          if (hasLabel("has_translations")) {
+            await removeLabelFromPR(pullID, "has_translations");
+            await addLabelToPR(pullID, "translations_done");
+          } else if (!hasLabel("translations_done")) {
+            await addLabelToPR(pullID, "translations_done");
+          }
+        }
       }
 
-      // Trigger input event to let GitHub know the content changed
-      const textArea = getTextArea();
-      if (textArea) {
-        textArea.dispatchEvent(new Event("input", { bubbles: true }));
-        textArea.dispatchEvent(new Event("change", { bubbles: true }));
-      }
+      // Update PR via API
+      await updatePullRequest(pullID, { body: updatedBody });
 
-      // Wait a moment for GitHub to process the changes
-      await new Promise(resolve => setTimeout(resolve, 500));
-
-      // Click Update comment button
-      const updateButton = document.querySelector(".js-comment-update").querySelector("button[type=submit]");
-      if (!updateButton) {
-        console.error("Update button not found");
-        return;
-      }
-      debugger;
-      updateButton.click();
+      // Refresh the page to show changes
+      window.location.reload();
     } catch (error) {
       console.error("Error refreshing description:", error);
+      alert(`Error refreshing description: ${error.message}`);
     }
   });
 
@@ -171,4 +212,8 @@ function initRefreshButton() {
 }
 
 // Initialize immediately and watch for changes
-initializeWithObserver(initRefreshButton);
+initializeWithObserver(initRefreshButton, {
+  debounceMs: 200,
+  usePolling: true,
+  pollingInterval: 1000
+});

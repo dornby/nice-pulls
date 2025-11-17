@@ -154,3 +154,28 @@ async function assignUserToPR(prNumber, username) {
     }),
   });
 }
+
+/**
+ * Updates a pull request
+ * @param {number} prNumber - The PR number
+ * @param {Object} updates - Object with title and/or body to update
+ * @returns {Promise<Object>} The updated PR object
+ */
+async function updatePullRequest(prNumber, updates) {
+  return githubApiCall(`/pulls/${prNumber}`, {
+    method: "PATCH",
+    body: JSON.stringify(updates),
+  });
+}
+
+/**
+ * Removes a label from a pull request
+ * @param {number} prNumber - The PR number
+ * @param {string} label - The label name to remove
+ * @returns {Promise<Array>} Array of remaining labels
+ */
+async function removeLabelFromPR(prNumber, label) {
+  return githubApiCall(`/issues/${prNumber}/labels/${label}`, {
+    method: "DELETE",
+  });
+}
