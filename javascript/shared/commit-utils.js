@@ -167,8 +167,8 @@ function notAnEmptyCommit(commit) {
  * @returns {string} Updated content
  */
 function replaceSpecsPercentage(textAreaContent, specsPercentage) {
-  // Use regex to replace the percentage value between "🌈   _" and "% of the diff is specs_"
-  const regex = /(🌈\s+_)\d+(%\s+of\s+the\s+diff\s+is\s+specs_)/;
+  // Use regex to replace the percentage value between "  🌈   _" and "% of the diff is specs_"
+  const regex = /([ \s]*🌈[ \s]+_)\d+(%\s+of\s+the\s+diff\s+is\s+specs_)/;
   return textAreaContent.replace(regex, `$1${specsPercentage}$2`);
 }
 

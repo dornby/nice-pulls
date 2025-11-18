@@ -14,17 +14,17 @@ function featureText(specsPercentage, joinedCommitTitles = "", commitCount = 0, 
   const commitByCommitLine = commitCount > 1 ? `${COMMIT_BY_COMMIT_LINE}\n` : "";
   const lyriqLine = includeLyriq ? `${LYRIQ_BRANCH_LINE}\n` : "";
   return `## Links
-📝 [PRD]()${lyriqLine}
-🎨 [Figma]()
-🪸 [Deep Dive]()
-💬 [Slack]()
+\u00a0\u00a0📝\u00a0\u00a0\u00a0[PRD]()${lyriqLine}
+\u00a0\u00a0🎨\u00a0\u00a0\u00a0[Figma]()
+\u00a0\u00a0🪸\u00a0\u00a0\u00a0[Deep Dive]()
+\u00a0\u00a0💬\u00a0\u00a0\u00a0[Slack]()
 
 ## Timeline
 * Previous PR: _None_
 * Followup PR: _None_
 
 ## Review Guide
-${commitByCommitLine}🌈 _${specsPercentage}% of the diff is specs_
+${commitByCommitLine}\u00a0\u00a0🌈\u00a0\u00a0\u00a0_${specsPercentage}% of the diff is specs_
 
 ## Context
 
@@ -52,11 +52,11 @@ function fixText(specsPercentage, joinedCommitTitles = "", commitCount = 0, incl
   const commitByCommitLine = commitCount > 1 ? `${COMMIT_BY_COMMIT_LINE}\n` : "";
   const lyriqLine = includeLyriq ? `\n${LYRIQ_BRANCH_LINE}\n` : "";
   return `## Links${lyriqLine}
-  💬   [Slack]()
-  🐛   [Bugsnag]()
+\u00a0\u00a0💬\u00a0\u00a0\u00a0[Slack]()
+\u00a0\u00a0🐛\u00a0\u00a0\u00a0[Bugsnag]()
 
 ## Review Guide
-${commitByCommitLine}🌈 _${specsPercentage}% of the diff is specs_
+${commitByCommitLine}\u00a0\u00a0🌈\u00a0\u00a0\u00a0_${specsPercentage}% of the diff is specs_
 
 ## Context
 
@@ -85,9 +85,9 @@ function translationsText() {
 > _This PR will not be merged onto main, it"s sole purpose is to receive Lyriq translations. The Lyriq commits will then be cherry-picked in the feature branch._
 
 ## Links
-👑 [Feature Branch]()
-💬 [Slack]()
-♌️ [Lyriq job]()
+\u00a0\u00a0👑\u00a0\u00a0\u00a0[Feature Branch]()
+\u00a0\u00a0💬\u00a0\u00a0\u00a0[Slack]()
+\u00a0\u00a0♌️\u00a0\u00a0\u00a0[Lyriq job]()
 
 ## Completion
 ${completionCheckboxes}

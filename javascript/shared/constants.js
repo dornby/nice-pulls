@@ -23,8 +23,8 @@ const THEME = {
 };
 
 // PR Description constants
-const COMMIT_BY_COMMIT_LINE = "🪜 _Commit by commit_";
-const LYRIQ_BRANCH_LINE = "♌️ [Lyriq Branch]() | _Not yet started_ 👻";
+const COMMIT_BY_COMMIT_LINE = "\u00a0\u00a0🪜\u00a0\u00a0\u00a0_Commit by commit_";
+const LYRIQ_BRANCH_LINE = "\u00a0\u00a0♌️\u00a0\u00a0\u00a0[Lyriq Branch]() | _Not yet started_ 👻";
 
 // Required locales for translation PRs
 const REQUIRED_LOCALES = [

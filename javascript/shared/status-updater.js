@@ -19,14 +19,14 @@ const STATUS_PATTERNS = {
  */
 function updateLyriqStatus(content, newStatus) {
   // Match the Lyriq Branch line with any status pattern
-  const lyriqLineRegex = /♌️\s+\[Lyriq Branch\]\([^)]*\)\s*\|\s*[^\n]+/;
+  const lyriqLineRegex = /[ \s]*♌️[ \s]+\[Lyriq Branch\]\([^)]*\)\s*\|\s*[^\n]+/;
 
   // Extract the URL from the existing line if present
-  const match = content.match(/♌️\s+\[Lyriq Branch\]\(([^)]*)\)/);
+  const match = content.match(/[ \s]*♌️[ \s]+\[Lyriq Branch\]\(([^)]*)\)/);
   const url = match ? match[1] : "";
 
   // Create the new line with the updated status
-  const newLine = `♌️   [Lyriq Branch](${url}) | ${newStatus.text} ${newStatus.emoji}`;
+  const newLine = `\u00a0\u00a0♌️\u00a0\u00a0\u00a0[Lyriq Branch](${url}) | ${newStatus.text} ${newStatus.emoji}`;
 
   return content.replace(lyriqLineRegex, newLine);
 }

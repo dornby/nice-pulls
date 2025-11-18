@@ -235,7 +235,7 @@ async function refreshPRDescription(prNumber) {
         }
       } else {
         // For feature branches, insert Lyriq line after PRD line
-        const prdLineRegex = /(📝\s+\[PRD\]\([^)]*\))/;
+        const prdLineRegex = /([ \s]*📝[ \s]+\[PRD\]\([^)]*\))/;
         if (prdLineRegex.test(updatedBody)) {
           updatedBody = updatedBody.replace(
             prdLineRegex,
