@@ -18,7 +18,6 @@
         "javascript/shared/dom-utils.js",
         "javascript/shared/github-api.js",
         "javascript/shared/templates.js",
-        "javascript/shared/label-manager.js",
         "javascript/shared/specs-calculator.js",
         "javascript/shared/commit-utils.js",
         "javascript/compare.js"
@@ -32,7 +31,6 @@
         "javascript/shared/dom-utils.js",
         "javascript/shared/github-api.js",
         "javascript/shared/templates.js",
-        "javascript/shared/label-manager.js",
         "javascript/shared/specs-calculator.js",
         "javascript/shared/commit-utils.js",
         "javascript/shared/status-updater.js",

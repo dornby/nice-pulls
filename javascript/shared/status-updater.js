@@ -5,11 +5,23 @@
 /**
  * Status definitions for the Lyriq Branch line
  */
-const STATUS_PATTERNS = {
-  NOT_YET_STARTED: { text: "_Not yet started_", emoji: "👻" },
-  IN_PROGRESS: { text: "_In progress_", emoji: "⏳" },
-  DONE: { text: "_Done_", emoji: "✅" },
-};
+function updateLyriqStatus(content, newStatus) {
+  const lyriqLineRegex = /[ \s]*♌️[ \s]+\[Lyriq Branch\]\([^)]*\)\s*\|\s*[^\n]+/;
+  const match = content.match(/[ \s]*♌️[ \s]+\[Lyriq Branch\]\(([^)]*)\)/);
+  const url = match ? match[1] : "";
+  const newLine = `\u00a0\u00a0♌️\u00a0\u00a0\u00a0[Lyriq Branch](${url}) | ${newStatus.text} ${newStatus.emoji}`;
+  return content.replace(lyriqLineRegex, newLine);
+}
+
+function areAllLocalesPresent(files) {
+  const localeFiles = files.filter(
+    file => file.filename.startsWith(LOCALES_PATH) && file.status !== "removed"
+  );
+
+  return REQUIRED_LOCALES.every(locale =>
+    localeFiles.some(file => file.filename.endsWith(locale.file))
+  );
+}
 
 /**
  * Updates the Lyriq Branch status in the PR description

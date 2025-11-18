@@ -1,23 +1,16 @@
 async function onPaste() {
   setTimeout(async () => {
-    // Get fresh reference to textarea after paste has processed
-    const textArea = getTextArea();
+    const textArea = document.getElementsByName(SELECTORS.PR_BODY_TEXTAREA)[0];
     if (!textArea) return;
 
     const hasLyriqBranchLink = textArea.value.includes(`[Lyriq Branch](${GITHUB_REPO_URL}/pull/`);
 
     if (hasLyriqBranchLink) {
       try {
-        // Show visual feedback
         createLoadingNotification("Updating PR...");
-
         const pullID = getPullRequestId();
-
-        // Update PR body with current textarea value (with Lyriq status updated)
         const updatedBody = updateLyriqStatus(textArea.value, STATUS_PATTERNS.IN_PROGRESS);
         await updatePullRequest(pullID, { body: updatedBody });
-
-        // Refresh the page to show changes
         window.location.reload();
       } catch (error) {
         console.error("Error updating PR on paste:", error);
@@ -27,19 +20,12 @@ async function onPaste() {
   }, TIMING.PASTE_DELAY);
 }
 
-function getTextArea() {
-  return document.getElementsByName("pull_request[body]")[0];
-}
-
 document.addEventListener("paste", onPaste);
 
 function initRefreshButton() {
-  const actions = document.querySelector(".gh-header-actions");
-  if (!actions) return; // Element not ready yet
-
-  // Check if button already exists
-  if (actions.querySelector("[data-nice-pulls-refresh]")) {
-    return; // Already initialized
+  const actions = document.querySelector(SELECTORS.GH_HEADER_ACTIONS);
+  if (!actions || actions.querySelector("[data-nice-pulls-refresh]")) {
+    return;
   }
 
   const editButton = actions.children[0];
@@ -49,8 +35,6 @@ function initRefreshButton() {
     try {
       const pullID = getPullRequestId();
       await refreshPRDescription(pullID);
-
-      // Refresh the page to show changes
       window.location.reload();
     } catch (error) {
       console.error("Error refreshing description:", error);
@@ -61,14 +45,13 @@ function initRefreshButton() {
   const refreshButton = refreshButtonGroup.children[0];
   refreshButton.ariaLabel = null;
   refreshButton.dataset.gaClick = null;
-  refreshButton.dataset.nicePullsRefresh = "true"; // Mark as initialized
+  refreshButton.dataset.nicePullsRefresh = "true";
   refreshButton.classList.remove("js-details-target", "js-title-edit-button");
   refreshButton.classList.add("Button--secondary", "Button--small", "Button", "m-0", "mr-md-0");
 
   actions.insertAdjacentElement("afterbegin", refreshButtonGroup);
 }
 
-// Initialize immediately and watch for changes
 initializeWithObserver(initRefreshButton, {
   debounceMs: 200,
   usePolling: true,

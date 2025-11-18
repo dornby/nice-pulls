@@ -1,13 +1,5 @@
-/**
- * GitHub API utility functions
- */
-
 let githubBearerToken = null;
 
-/**
- * Loads the GitHub bearer token from secrets.json
- * @returns {Promise<string>} The bearer token
- */
 async function loadGithubToken() {
   if (githubBearerToken) {
     return githubBearerToken;
@@ -24,16 +16,10 @@ async function loadGithubToken() {
   return githubBearerToken;
 }
 
-/**
- * Gets the current authenticated user
- * @returns {Promise<Object>} The user object with login, name, etc.
- */
 async function getCurrentUser() {
   const token = await loadGithubToken();
   const response = await fetch("https://api.github.com/user", {
-    headers: {
-      Authorization: `Bearer ${token}`,
-    }
+    headers: { Authorization: `Bearer ${token}` }
   });
 
   if (!response.ok) {
@@ -43,12 +29,6 @@ async function getCurrentUser() {
   return response.json();
 }
 
-/**
- * Makes an authenticated API call to GitHub
- * @param {string} endpoint - API endpoint (e.g., '/pulls/123/files')
- * @param {Object} options - Fetch options
- * @returns {Promise<Object>} The JSON response
- */
 async function githubApiCall(endpoint, options = {}) {
   const token = await loadGithubToken();
   const url = endpoint.startsWith("http") ? endpoint : `${GITHUB_API_BASE}${endpoint}`;
@@ -70,21 +50,10 @@ async function githubApiCall(endpoint, options = {}) {
   return response.json();
 }
 
-/**
- * Fetches files from a GitHub PR with pagination support
- * @param {string} pullID - The pull request ID
- * @param {number} page - The page number (1-indexed)
- * @returns {Promise<Array>} Array of file objects
- */
 async function fetchPRFiles(pullID, page = 1) {
   return githubApiCall(`/pulls/${pullID}/files?page=${page}`);
 }
 
-/**
- * Fetches all files from a GitHub PR (handles pagination)
- * @param {string} pullID - The pull request ID
- * @returns {Promise<Array>} Array of all file objects
- */
 async function fetchAllPRFiles(pullID) {
   let allFiles = [];
   let page = 1;
@@ -94,77 +63,36 @@ async function fetchAllPRFiles(pullID) {
     files = await fetchPRFiles(pullID, page);
     allFiles = allFiles.concat(files);
     page++;
-  } while (files.length === 30); // GitHub returns 30 items per page
+  } while (files.length === GITHUB_ITEMS_PER_PAGE);
 
   return allFiles;
 }
 
-/**
- * Fetches commits from a GitHub PR
- * @param {string} pullID - The pull request ID
- * @returns {Promise<Array>} Array of commit objects
- */
 async function fetchPRCommits(pullID) {
   return githubApiCall(`/pulls/${pullID}/commits`);
 }
 
-/**
- * Creates a new pull request
- * @param {string} title - The PR title
- * @param {string} body - The PR description
- * @param {string} head - The head branch name
- * @param {string} base - The base branch name
- * @returns {Promise<Object>} The created PR object
- */
 async function createPullRequest(title, body, head, base) {
   return githubApiCall("/pulls", {
     method: "POST",
-    body: JSON.stringify({
-      title,
-      body,
-      head,
-      base,
-      draft: true,
-    }),
+    body: JSON.stringify({ title, body, head, base, draft: true }),
   });
 }
 
-/**
- * Adds a label to a pull request
- * @param {number} prNumber - The PR number
- * @param {string} label - The label name to add
- * @returns {Promise<Array>} Array of labels on the PR
- */
 async function addLabelToPR(prNumber, label) {
   return githubApiCall(`/issues/${prNumber}/labels`, {
     method: "POST",
-    body: JSON.stringify({
-      labels: [label],
-    }),
+    body: JSON.stringify({ labels: [label] }),
   });
 }
 
-/**
- * Assigns a user to a pull request
- * @param {number} prNumber - The PR number
- * @param {string} username - The GitHub username to assign
- * @returns {Promise<Object>} The updated issue object
- */
 async function assignUserToPR(prNumber, username) {
   return githubApiCall(`/issues/${prNumber}/assignees`, {
     method: "POST",
-    body: JSON.stringify({
-      assignees: [username],
-    }),
+    body: JSON.stringify({ assignees: [username] }),
   });
 }
 
-/**
- * Updates a pull request
- * @param {number} prNumber - The PR number
- * @param {Object} updates - Object with title and/or body to update
- * @returns {Promise<Object>} The updated PR object
- */
 async function updatePullRequest(prNumber, updates) {
   return githubApiCall(`/pulls/${prNumber}`, {
     method: "PATCH",
@@ -172,16 +100,70 @@ async function updatePullRequest(prNumber, updates) {
   });
 }
 
-/**
- * Removes a label from a pull request
- * @param {number} prNumber - The PR number
- * @param {string} label - The label name to remove
- * @returns {Promise<Array>} Array of remaining labels
- */
 async function removeLabelFromPR(prNumber, label) {
   return githubApiCall(`/issues/${prNumber}/labels/${label}`, {
     method: "DELETE",
   });
+}
+
+async function refreshPRDescription(prNumber) {
+  const files = await fetchAllPRFiles(prNumber);
+  const commits = await fetchPRCommits(prNumber);
+  const pr = await githubApiCall(`/pulls/${prNumber}`);
+  const branchName = pr.head.ref;
+  const isBranchTranslation = isTranslationBranch(branchName);
+  const isBranchFix = isFixBranch(branchName);
+
+  let updatedBody = pr.body || "";
+
+  if (isBranchTranslation) {
+    const completionText = generateLocaleCompletionText(files);
+    updatedBody = replaceLocaleCompletion(updatedBody, completionText);
+  } else {
+    const specsPercentage = calculateSpecsPercentageFromFiles(files);
+    updatedBody = replaceSpecsPercentage(updatedBody, specsPercentage);
+    updatedBody = replaceCommitsWith(commits, updatedBody);
+
+    const currentLabels = pr.labels.map(label => label.name);
+    const hasEnYml = files.some(file =>
+      file.filename.endsWith(EN_YML) &&
+      file.filename.startsWith(LOCALES_PATH) &&
+      file.status !== "removed"
+    );
+
+    if (hasEnYml && !updatedBody.includes("[Lyriq Branch]")) {
+      if (isBranchFix) {
+        const linksHeaderRegex = /(## Links)/;
+        if (linksHeaderRegex.test(updatedBody)) {
+          updatedBody = updatedBody.replace(linksHeaderRegex, `$1\n${LYRIQ_BRANCH_LINE}`);
+        }
+      } else {
+        const prdLineRegex = /([ \s]*📝[ \s]+\[PRD\]\([^)]*\))/;
+        if (prdLineRegex.test(updatedBody)) {
+          updatedBody = updatedBody.replace(prdLineRegex, `$1\n${LYRIQ_BRANCH_LINE}`);
+        }
+      }
+    }
+
+    if (areAllLocalesPresent(files)) {
+      updatedBody = updateLyriqStatus(updatedBody, STATUS_PATTERNS.DONE);
+
+      if (currentLabels.includes(LABELS.HAS_TRANSLATIONS)) {
+        await removeLabelFromPR(prNumber, LABELS.HAS_TRANSLATIONS);
+        await addLabelToPR(prNumber, LABELS.TRANSLATIONS_DONE);
+      } else if (!currentLabels.includes(LABELS.TRANSLATIONS_DONE)) {
+        await addLabelToPR(prNumber, LABELS.TRANSLATIONS_DONE);
+      }
+    } else if (hasEnYml && !currentLabels.includes(LABELS.HAS_TRANSLATIONS) && !currentLabels.includes(LABELS.TRANSLATIONS_DONE)) {
+      await addLabelToPR(prNumber, LABELS.HAS_TRANSLATIONS);
+
+      if (updatedBody.includes(`[Lyriq Branch](${GITHUB_REPO_URL}/pull/`)) {
+        updatedBody = updateLyriqStatus(updatedBody, STATUS_PATTERNS.IN_PROGRESS);
+      }
+    }
+  }
+
+  await updatePullRequest(prNumber, { body: updatedBody });
 }
 
 /**

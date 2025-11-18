@@ -1,14 +1,3 @@
-/**
- * DOM utility functions for manipulating GitHub UI elements
- */
-
-/**
- * Creates a custom styled button with purple theme
- * @param {HTMLElement} sourceButton - Button to clone from
- * @param {string} buttonText - Text for the button
- * @param {Function} clickHandler - Click event handler
- * @returns {HTMLElement} The styled button element
- */
 function createStyledButton(sourceButton, buttonText, clickHandler) {
   const buttonGroup = document.createElement("div");
   buttonGroup.innerHTML = sourceButton.outerHTML;
@@ -19,11 +8,7 @@ function createStyledButton(sourceButton, buttonText, clickHandler) {
   button.classList.remove("hx_create-pr-button");
 
   applyPurpleButtonStyle(button);
-
-  delete button.dataset.hydroClick;
-  delete button.dataset.hydroClickHmac;
-  delete button.dataset.disableInvalid;
-  delete button.dataset.disableWith;
+  cleanButtonDataAttributes(button);
 
   if (clickHandler) {
     button.addEventListener("click", clickHandler);
@@ -32,10 +17,13 @@ function createStyledButton(sourceButton, buttonText, clickHandler) {
   return buttonGroup;
 }
 
-/**
- * Applies custom purple button styling with hover effects
- * @param {HTMLElement} button - Button element to style
- */
+function cleanButtonDataAttributes(button) {
+  delete button.dataset.hydroClick;
+  delete button.dataset.hydroClickHmac;
+  delete button.dataset.disableInvalid;
+  delete button.dataset.disableWith;
+}
+
 function applyPurpleButtonStyle(button) {
   button.style.backgroundColor = THEME.PURPLE_PRIMARY;
   button.style.borderColor = THEME.PURPLE_PRIMARY;
@@ -51,65 +39,35 @@ function applyPurpleButtonStyle(button) {
   });
 }
 
-/**
- * Gets the current branch name from the GitHub UI
- * @param {string} context - "compare" or "pull" to determine which selector to use
- * @returns {string} The branch name
- */
 function getHeadRefName(context) {
   if (context === "compare") {
-    return document.getElementById("head-ref-selector")
-      .querySelector(".Button-label")
+    return document.querySelector(SELECTORS.HEAD_REF_SELECTOR)
+      .querySelector(SELECTORS.BUTTON_LABEL)
       .children[1].innerText;
-  } else if (context === "pull") {
-    return document.getElementsByClassName("head-ref")[0].title;
   }
-  return "";
+  return document.querySelector(SELECTORS.HEAD_REF_CLASS).title;
 }
 
-function getBaseRefName(context) {
-  return document.getElementById("base-ref-selector")
-    .querySelector(".Button-label")
-    .children[1].innerText
-};
+function getBaseRefName() {
+  return document.querySelector(SELECTORS.BASE_REF_SELECTOR)
+    .querySelector(SELECTORS.BUTTON_LABEL)
+    .children[1].innerText;
+}
 
-/**
- * Gets the pull request ID from the current URL
- * @returns {string} The PR ID
- */
 function getPullRequestId() {
   return window.location.href.split("pull/")[1];
 }
 
-/**
- * Checks if a branch is a translation branch
- * @param {string} branchName - The branch name to check
- * @returns {boolean} True if it's a translation branch
- */
 function isTranslationBranch(branchName) {
-  return branchName.includes("translations/");
+  return branchName.includes(TRANSLATION_BRANCH_PREFIX);
 }
 
-/**
- * Checks if a branch is a fix branch
- * @param {string} branchName - The branch name to check
- * @returns {boolean} True if it's a fix branch
- */
 function isFixBranch(branchName) {
-  return branchName.startsWith("fix/");
+  return branchName.startsWith(FIX_BRANCH_PREFIX);
 }
 
-/**
- * Creates a loading notification with spinner
- * @param {string} message - Message to display
- * @param {Object} options - Configuration options
- * @returns {Object} Object with notification element and update methods
- */
 function createLoadingNotification(message, options = {}) {
-  const {
-    showProgress = false,
-    spinnerSize = 16
-  } = options;
+  const { showProgress = false, spinnerSize = 16 } = options;
 
   const notification = document.createElement("div");
   notification.style.cssText = `
@@ -138,30 +96,18 @@ function createLoadingNotification(message, options = {}) {
     </svg>
   `;
 
-  if (showProgress) {
-    notification.innerHTML = `
-      <div style="display: flex; align-items: center; gap: 12px;">
-        ${spinnerHTML}
-        <span id="notification-status">${message}</span>
-      </div>
-      <div id="notification-progress" style="font-size: 14px; opacity: 0.9;"></div>
-      <style>
-        @keyframes spin {
-          to { transform: rotate(360deg); }
-        }
-      </style>
-    `;
-  } else {
-    notification.innerHTML = `
+  notification.innerHTML = showProgress ? `
+    <div style="display: flex; align-items: center; gap: 12px;">
       ${spinnerHTML}
       <span id="notification-status">${message}</span>
-      <style>
-        @keyframes spin {
-          to { transform: rotate(360deg); }
-        }
-      </style>
-    `;
-  }
+    </div>
+    <div id="notification-progress" style="font-size: 14px; opacity: 0.9;"></div>
+    <style>@keyframes spin { to { transform: rotate(360deg); } }</style>
+  ` : `
+    ${spinnerHTML}
+    <span id="notification-status">${message}</span>
+    <style>@keyframes spin { to { transform: rotate(360deg); } }</style>
+  `;
 
   document.body.appendChild(notification);
 
@@ -179,11 +125,6 @@ function createLoadingNotification(message, options = {}) {
   };
 }
 
-/**
- * Initializes a function with MutationObserver and optional polling
- * @param {Function} initFunction - Function to call on initialization and changes
- * @param {Object} options - Configuration options
- */
 function initializeWithObserver(initFunction, options = {}) {
   const {
     target = document.querySelector("main") || document.body,
@@ -193,10 +134,8 @@ function initializeWithObserver(initFunction, options = {}) {
     pollingInterval = TIMING.POLLING_INTERVAL
   } = options;
 
-  // Initial call
   initFunction();
 
-  // Debounced observer
   let timeout;
   const observer = new MutationObserver(() => {
     clearTimeout(timeout);
@@ -204,21 +143,14 @@ function initializeWithObserver(initFunction, options = {}) {
   });
   observer.observe(target, observerOptions);
 
-  // Optional polling fallback
   if (usePolling) {
     setInterval(initFunction, pollingInterval);
   }
 }
 
-/**
- * Checks if en.yml is in the diff from DOM elements
- * @returns {boolean} True if en.yml is present in the diff
- */
 function hasEnYmlInDOM() {
-  const fileInfos = Array.from(document.querySelectorAll(".file-info"));
-
-  return fileInfos.some((fileInfo) => {
-    const filename = fileInfo.querySelector(".Truncate a")?.title || "";
-    return filename.endsWith("en.yml") && filename.startsWith("config/locales/");
+  return Array.from(document.querySelectorAll(SELECTORS.FILE_INFO)).some((fileInfo) => {
+    const filename = fileInfo.querySelector(SELECTORS.TRUNCATE_LINK)?.title || "";
+    return filename.endsWith(EN_YML) && filename.startsWith(LOCALES_PATH);
   });
 }
