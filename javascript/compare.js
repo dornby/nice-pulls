@@ -78,6 +78,7 @@ async function onFormatPrButtonClick() {
     // Get current elements
     const titleInput = document.getElementById("pull_request_title");
     const joinedCommitTitles = extractCommitTitlesFromDOM();
+    const includeLyriq = hasEnYmlInDOM();
 
     // Generate title and body
     let title = titleInput.value.trim();
@@ -88,12 +89,10 @@ async function onFormatPrButtonClick() {
     } else if (isBranchFix) {
       const specsPercentage = calculateSpecsPercentageFromDOM();
       const commitCount = joinedCommitTitles ? joinedCommitTitles.split('\n').filter(t => t.trim()).length : 0;
-      const includeLyriq = hasEnYmlInDOM();
       body = fixText(specsPercentage, joinedCommitTitles, commitCount, includeLyriq);
     } else {
       const specsPercentage = calculateSpecsPercentageFromDOM();
       const commitCount = joinedCommitTitles ? joinedCommitTitles.split('\n').filter(t => t.trim()).length : 0;
-      const includeLyriq = hasEnYmlInDOM();
       body = featureText(specsPercentage, joinedCommitTitles, commitCount, includeLyriq);
     }
 
@@ -111,6 +110,11 @@ async function onFormatPrButtonClick() {
     // Add lyriq label for translation branches
     if (isBranchTranslation) {
       await addLabelToPR(pr.number, "lyriq");
+    }
+
+    // Add has_translations label if en.yml files are present
+    if (includeLyriq) {
+      await addLabelToPR(pr.number, "has_translations");
     }
 
     // Assign yourself to the PR
