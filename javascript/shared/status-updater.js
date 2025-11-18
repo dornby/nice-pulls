@@ -9,7 +9,7 @@ function updateLyriqStatus(content, newStatus) {
   const lyriqLineRegex = /[ \s]*♌️[ \s]+\[Lyriq Branch\]\([^)]*\)\s*\|\s*[^\n]+/;
   const match = content.match(/[ \s]*♌️[ \s]+\[Lyriq Branch\]\(([^)]*)\)/);
   const url = match ? match[1] : "";
-  const newLine = `\u00a0\u00a0♌️\u00a0\u00a0\u00a0[Lyriq Branch](${url}) | ${newStatus.text} ${newStatus.emoji}`;
+  const newLine = `\n\u00a0\u00a0♌️\u00a0\u00a0\u00a0[Lyriq Branch](${url}) | ${newStatus.text} ${newStatus.emoji}`;
   return content.replace(lyriqLineRegex, newLine);
 }
 
