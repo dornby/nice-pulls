@@ -198,6 +198,7 @@ async function refreshPRDescription(prNumber) {
   const pr = await githubApiCall(`/pulls/${prNumber}`);
   const branchName = pr.head.ref;
   const isBranchTranslation = isTranslationBranch(branchName);
+  const isBranchFix = isFixBranch(branchName);
 
   let updatedBody = pr.body || "";
 
@@ -206,7 +207,7 @@ async function refreshPRDescription(prNumber) {
     const completionText = generateLocaleCompletionText(files);
     updatedBody = replaceLocaleCompletion(updatedBody, completionText);
   } else {
-    // Update feature PR: specs, commits, and translation status
+    // Update feature/fix PR: specs, commits, and translation status
     const specsPercentage = calculateSpecsPercentageFromFiles(files);
     updatedBody = replaceSpecsPercentage(updatedBody, specsPercentage);
     updatedBody = replaceCommitsWith(commits, updatedBody);
@@ -223,13 +224,24 @@ async function refreshPRDescription(prNumber) {
 
     // Add Lyriq Branch line if en.yml is present and the line doesn't exist yet
     if (hasEnYml && !updatedBody.includes("[Lyriq Branch]")) {
-      // Insert Lyriq line after PRD line in the Links section
-      const prdLineRegex = /(📝\s+\[PRD\]\([^)]*\))/;
-      if (prdLineRegex.test(updatedBody)) {
-        updatedBody = updatedBody.replace(
-          prdLineRegex,
-          `$1\n${LYRIQ_BRANCH_LINE}`
-        );
+      if (isBranchFix) {
+        // For fix branches, insert at the beginning of Links section
+        const linksHeaderRegex = /(## Links)/;
+        if (linksHeaderRegex.test(updatedBody)) {
+          updatedBody = updatedBody.replace(
+            linksHeaderRegex,
+            `$1\n${LYRIQ_BRANCH_LINE}`
+          );
+        }
+      } else {
+        // For feature branches, insert Lyriq line after PRD line
+        const prdLineRegex = /(📝\s+\[PRD\]\([^)]*\))/;
+        if (prdLineRegex.test(updatedBody)) {
+          updatedBody = updatedBody.replace(
+            prdLineRegex,
+            `$1\n${LYRIQ_BRANCH_LINE}`
+          );
+        }
       }
     }
 

@@ -91,6 +91,15 @@ function isTranslationBranch(branchName) {
 }
 
 /**
+ * Checks if a branch is a fix branch
+ * @param {string} branchName - The branch name to check
+ * @returns {boolean} True if it's a fix branch
+ */
+function isFixBranch(branchName) {
+  return branchName.startsWith("fix/");
+}
+
+/**
  * Creates a loading notification with spinner
  * @param {string} message - Message to display
  * @param {Object} options - Configuration options

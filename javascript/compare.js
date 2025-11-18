@@ -73,6 +73,7 @@ async function onFormatPrButtonClick() {
     const headBranch = getHeadRefName("compare");
 
     const isBranchTranslation = isTranslationBranch(headBranch);
+    const isBranchFix = isFixBranch(headBranch);
 
     // Get current elements
     const titleInput = document.getElementById("pull_request_title");
@@ -84,6 +85,11 @@ async function onFormatPrButtonClick() {
 
     if (isBranchTranslation) {
       body = translationsText();
+    } else if (isBranchFix) {
+      const specsPercentage = calculateSpecsPercentageFromDOM();
+      const commitCount = joinedCommitTitles ? joinedCommitTitles.split('\n').filter(t => t.trim()).length : 0;
+      const includeLyriq = hasEnYmlInDOM();
+      body = fixText(specsPercentage, joinedCommitTitles, commitCount, includeLyriq);
     } else {
       const specsPercentage = calculateSpecsPercentageFromDOM();
       const commitCount = joinedCommitTitles ? joinedCommitTitles.split('\n').filter(t => t.trim()).length : 0;
