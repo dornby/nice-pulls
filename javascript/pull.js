@@ -1,6 +1,3 @@
-// Initialize
-let translationLabelIsAdded = hasLabel("has_translations");
-
 async function onPaste() {
   setTimeout(async () => {
     // Get fresh reference to textarea after paste has processed
@@ -9,7 +6,7 @@ async function onPaste() {
 
     const hasLyriqBranchLink = textArea.value.includes(`[Lyriq Branch](${GITHUB_REPO_URL}/pull/`);
 
-    if (hasLyriqBranchLink && !translationLabelIsAdded) {
+    if (hasLyriqBranchLink) {
       try {
         // Show visual feedback
         createLoadingNotification("Updating PR...");
@@ -19,10 +16,6 @@ async function onPaste() {
         // Update PR body with current textarea value (with Lyriq status updated)
         const updatedBody = updateLyriqStatus(textArea.value, STATUS_PATTERNS.IN_PROGRESS);
         await updatePullRequest(pullID, { body: updatedBody });
-
-        // Add has_translations label via API
-        await addLabelToPR(pullID, "has_translations");
-        translationLabelIsAdded = true;
 
         // Refresh the page to show changes
         window.location.reload();

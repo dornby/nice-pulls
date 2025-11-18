@@ -211,12 +211,19 @@ async function refreshPRDescription(prNumber) {
     updatedBody = replaceSpecsPercentage(updatedBody, specsPercentage);
     updatedBody = replaceCommitsWith(commits, updatedBody);
 
+    // Get current labels
+    const currentLabels = pr.labels.map(label => label.name);
+
+    // Check if en.yml is in the PR diff
+    const hasEnYml = files.some(file =>
+      file.filename.endsWith("en.yml") &&
+      file.filename.startsWith("config/locales/") &&
+      file.status !== "removed"
+    );
+
     // Check if all locales are present and update status/labels
     if (areAllLocalesPresent(files)) {
       updatedBody = updateLyriqStatus(updatedBody, STATUS_PATTERNS.DONE);
-
-      // Get current labels
-      const currentLabels = pr.labels.map(label => label.name);
 
       // Swap labels via API if needed
       if (currentLabels.includes("has_translations")) {
@@ -224,6 +231,14 @@ async function refreshPRDescription(prNumber) {
         await addLabelToPR(prNumber, "translations_done");
       } else if (!currentLabels.includes("translations_done")) {
         await addLabelToPR(prNumber, "translations_done");
+      }
+    } else if (hasEnYml && !currentLabels.includes("has_translations") && !currentLabels.includes("translations_done")) {
+      // Only add has_translations if all locales are NOT present
+      await addLabelToPR(prNumber, "has_translations");
+
+      // Update Lyriq status to "In Progress" if there's a Lyriq Branch link
+      if (updatedBody.includes(`[Lyriq Branch](${GITHUB_REPO_URL}/pull/`)) {
+        updatedBody = updateLyriqStatus(updatedBody, STATUS_PATTERNS.IN_PROGRESS);
       }
     }
   }
