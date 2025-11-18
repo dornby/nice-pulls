@@ -87,7 +87,8 @@ async function onFormatPrButtonClick() {
     } else {
       const specsPercentage = calculateSpecsPercentageFromDOM();
       const commitCount = joinedCommitTitles ? joinedCommitTitles.split('\n').filter(t => t.trim()).length : 0;
-      body = featureText(specsPercentage, joinedCommitTitles, commitCount);
+      const includeLyriq = hasEnYmlInDOM();
+      body = featureText(specsPercentage, joinedCommitTitles, commitCount, includeLyriq);
     }
 
     // Validate title

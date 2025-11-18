@@ -7,13 +7,14 @@
  * @param {number} specsPercentage - Percentage of specs in the PR
  * @param {string} joinedCommitTitles - Newline-separated commit titles
  * @param {number} commitCount - Number of commits (to determine if "Commit by commit" should be included)
+ * @param {boolean} includeLyriq - Whether to include the Lyriq Branch line (only if en.yml is in diff)
  * @returns {string} The formatted PR description
  */
-function featureText(specsPercentage, joinedCommitTitles = "", commitCount = 0) {
+function featureText(specsPercentage, joinedCommitTitles = "", commitCount = 0, includeLyriq = false) {
   const commitByCommitLine = commitCount > 1 ? `${COMMIT_BY_COMMIT_LINE}\n` : "";
+  const lyriqLine = includeLyriq ? `${LYRIQ_BRANCH_LINE}\n` : "";
   return `## Links
-  📝   [PRD]()
-  ♌️   [Lyriq Branch]() | _Not yet started_ 👻
+  📝   [PRD]()${lyriqLine}
   🎨   [Figma]()
   🪸   [Deep Dive]()
   💬   [Slack]()

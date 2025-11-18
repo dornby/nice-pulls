@@ -221,6 +221,18 @@ async function refreshPRDescription(prNumber) {
       file.status !== "removed"
     );
 
+    // Add Lyriq Branch line if en.yml is present and the line doesn't exist yet
+    if (hasEnYml && !updatedBody.includes("[Lyriq Branch]")) {
+      // Insert Lyriq line after PRD line in the Links section
+      const prdLineRegex = /(📝\s+\[PRD\]\([^)]*\))/;
+      if (prdLineRegex.test(updatedBody)) {
+        updatedBody = updatedBody.replace(
+          prdLineRegex,
+          `$1\n${LYRIQ_BRANCH_LINE}`
+        );
+      }
+    }
+
     // Check if all locales are present and update status/labels
     if (areAllLocalesPresent(files)) {
       updatedBody = updateLyriqStatus(updatedBody, STATUS_PATTERNS.DONE);

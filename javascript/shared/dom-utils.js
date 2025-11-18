@@ -200,3 +200,16 @@ function initializeWithObserver(initFunction, options = {}) {
     setInterval(initFunction, pollingInterval);
   }
 }
+
+/**
+ * Checks if en.yml is in the diff from DOM elements
+ * @returns {boolean} True if en.yml is present in the diff
+ */
+function hasEnYmlInDOM() {
+  const fileInfos = Array.from(document.querySelectorAll(".file-info"));
+
+  return fileInfos.some((fileInfo) => {
+    const filename = fileInfo.querySelector(".Truncate a")?.title || "";
+    return filename.endsWith("en.yml") && filename.startsWith("config/locales/");
+  });
+}
