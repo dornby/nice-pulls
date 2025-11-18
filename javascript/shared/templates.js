@@ -16,15 +16,14 @@ function featureText(specsPercentage, joinedCommitTitles = "", commitCount = 0, 
   return `## Links
 \u00a0\u00a0📝\u00a0\u00a0\u00a0[PRD]()${lyriqLine}
 \u00a0\u00a0🎨\u00a0\u00a0\u00a0[Figma]()
-\u00a0\u00a0🪸\u00a0\u00a0\u00a0[Deep Dive]()
-\u00a0\u00a0💬\u00a0\u00a0\u00a0[Slack]()
+\u00a0\u00a0🪸\u00a0\u00a0\u00a0[Deep Dive]()${SLACK_LINE}
 
 ## Timeline
 * Previous PR: _None_
 * Followup PR: _None_
 
 ## Review Guide
-${commitByCommitLine}\u00a0\u00a0🌈\u00a0\u00a0\u00a0_${specsPercentage}% of the diff is specs_
+${commitByCommitLine}${SPECS_LINE(specsPercentage)}
 
 ## Context
 
@@ -51,12 +50,11 @@ ${commitByCommitLine}\u00a0\u00a0🌈\u00a0\u00a0\u00a0_${specsPercentage}% of t
 function fixText(specsPercentage, joinedCommitTitles = "", commitCount = 0, includeLyriq = false) {
   const commitByCommitLine = commitCount > 1 ? `${COMMIT_BY_COMMIT_LINE}\n` : "";
   const lyriqLine = includeLyriq ? `\n${LYRIQ_BRANCH_LINE}\n` : "";
-  return `## Links${lyriqLine}
-\u00a0\u00a0💬\u00a0\u00a0\u00a0[Slack]()
+  return `## Links${lyriqLine}${SLACK_LINE}
 \u00a0\u00a0🐛\u00a0\u00a0\u00a0[Bugsnag]()
 
 ## Review Guide
-${commitByCommitLine}\u00a0\u00a0🌈\u00a0\u00a0\u00a0_${specsPercentage}% of the diff is specs_
+${commitByCommitLine}${SPECS_LINE(specsPercentage)}
 
 ## Context
 

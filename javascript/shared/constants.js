@@ -25,6 +25,8 @@ const THEME = {
 // PR Description constants
 const COMMIT_BY_COMMIT_LINE = "\u00a0\u00a0🪜\u00a0\u00a0\u00a0_Commit by commit_";
 const LYRIQ_BRANCH_LINE = "\u00a0\u00a0♌️\u00a0\u00a0\u00a0[Lyriq Branch]() | _Not yet started_ 👻";
+const SLACK_LINE = "\n\u00a0\u00a0💬\u00a0\u00a0\u00a0[Slack]()";
+const SPECS_LINE = (specsPercentage) => `\u00a0\u00a0🌈\u00a0\u00a0\u00a0_${specsPercentage}% of the diff is specs_`;
 
 // Required locales for translation PRs
 const REQUIRED_LOCALES = [
