@@ -23,6 +23,7 @@ const SELECTORS = {
   GH_HEADER_ACTIONS: ".gh-header-actions",
   NEW_PR_BUTTON: "a[href*='/compare']",
   PR_LIST_ITEM: ".js-navigation-item .Link--primary",
+  SELECTED_PR_ROW: ".js-issue-row.selected",
   FILE_INFO: ".file-info",
   DIFFSTAT: ".diffstat",
   TRUNCATE_LINK: ".Truncate a",

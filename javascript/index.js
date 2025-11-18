@@ -1,4 +1,4 @@
-function initRefreshAllButton() {
+function initRefreshCheckedButton() {
   const newPrButton = document.querySelector(SELECTORS.NEW_PR_BUTTON);
   if (!newPrButton || document.querySelector("[data-nice-pulls-refresh-all]")) {
     return;
@@ -7,22 +7,22 @@ function initRefreshAllButton() {
   const buttonContainer = newPrButton.parentElement;
   if (!buttonContainer) return;
 
-  const refreshAllButton = document.createElement("button");
-  refreshAllButton.className = "btn btn-sm";
-  refreshAllButton.type = "button";
-  refreshAllButton.textContent = "Refresh all";
-  refreshAllButton.dataset.nicePullsRefreshAll = "true";
+  const refreshCheckedButton = document.createElement("button");
+  refreshCheckedButton.className = "btn btn-sm";
+  refreshCheckedButton.type = "button";
+  refreshCheckedButton.textContent = "Refresh checked";
+  refreshCheckedButton.dataset.nicePullsRefreshChecked = "true";
 
-  applyPurpleButtonStyle(refreshAllButton);
-  refreshAllButton.style.color = "white";
-  refreshAllButton.style.marginLeft = "8px";
-  refreshAllButton.style.fontSize = "14px";
+  applyPurpleButtonStyle(refreshCheckedButton);
+  refreshCheckedButton.style.color = "white";
+  refreshCheckedButton.style.marginLeft = "8px";
+  refreshCheckedButton.style.fontSize = "14px";
 
-  refreshAllButton.addEventListener("click", onRefreshAllClick);
-  buttonContainer.insertAdjacentElement("afterend", refreshAllButton);
+  refreshCheckedButton.addEventListener("click", onRefreshCheckedClick);
+  buttonContainer.insertAdjacentElement("afterend", refreshCheckedButton);
 }
 
-async function onRefreshAllClick(event) {
+async function onRefreshCheckedClick(event) {
   const button = event.target;
   const originalText = button.textContent;
 
@@ -35,12 +35,14 @@ async function onRefreshAllClick(event) {
       spinnerSize: 20
     });
 
-    const prLinks = Array.from(document.querySelectorAll(SELECTORS.PR_LIST_ITEM))
-      .filter(link => link.href.includes("/pull/"))
+    const selectedRows = Array.from(document.querySelectorAll(SELECTORS.SELECTED_PR_ROW));
+    const prLinks = selectedRows
+      .map(row => row.querySelector(SELECTORS.PR_LIST_ITEM))
+      .filter(link => link && link.href.includes("/pull/"))
       .map(link => link.href.split("/pull/")[1].split(/[?#]/)[0]);
 
     if (prLinks.length === 0) {
-      notification.updateStatus("No PRs found");
+      notification.updateStatus("No checked PRs found");
       setTimeout(() => {
         notification.remove();
         button.disabled = false;
@@ -77,7 +79,7 @@ async function onRefreshAllClick(event) {
   }
 }
 
-initializeWithObserver(initRefreshAllButton, {
+initializeWithObserver(initRefreshCheckedButton, {
   debounceMs: 200,
   usePolling: true,
   pollingInterval: 1000
