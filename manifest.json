@@ -33,7 +33,7 @@
         "javascript/shared/templates.js",
         "javascript/shared/specs-calculator.js",
         "javascript/shared/commit-utils.js",
-        "javascript/shared/status-updater.js",
+        "javascript/shared/lyriq-status-updater.js",
         "javascript/pull.js"
       ],
       "run_at": "document_end"
@@ -47,7 +47,7 @@
         "javascript/shared/templates.js",
         "javascript/shared/specs-calculator.js",
         "javascript/shared/commit-utils.js",
-        "javascript/shared/status-updater.js",
+        "javascript/shared/lyriq-status-updater.js",
         "javascript/index.js"
       ],
       "run_at": "document_end"
