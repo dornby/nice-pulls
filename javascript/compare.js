@@ -86,7 +86,7 @@ async function onFormatPrButtonClick() {
       await addLabelToPR(pr.number, LABELS.LYRIQ);
     }
 
-    if (includeLyriq) {
+    if (includeLyriq && !isBranchTranslation) {
       await addLabelToPR(pr.number, LABELS.HAS_TRANSLATIONS);
     }
 
