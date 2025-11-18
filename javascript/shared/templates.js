@@ -29,7 +29,7 @@ ${commitByCommitLine}${SPECS_LINE(specsPercentage)}
 
 function fixText(specsPercentage, joinedCommitTitles = "", commitCount = 0, includeLyriq = false) {
   const commitByCommitLine = commitCount > 1 ? `${COMMIT_BY_COMMIT_LINE}\n` : "";
-  const lyriqLine = includeLyriq ? `\n${LYRIQ_BRANCH_LINE}\n` : "";
+  const lyriqLine = includeLyriq ? `\n${LYRIQ_BRANCH_LINE}` : "";
   return `## Links${lyriqLine}${SLACK_LINE}
 \u00a0\u00a0🐛\u00a0\u00a0\u00a0[Bugsnag]()
 
