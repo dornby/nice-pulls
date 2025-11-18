@@ -1,6 +1,6 @@
 function initRefreshCheckedButton() {
   const newPrButton = document.querySelector(SELECTORS.NEW_PR_BUTTON);
-  if (!newPrButton || document.querySelector("[data-nice-pulls-refresh-all]")) {
+  if (!newPrButton || document.querySelector("[data-nice-pulls-refresh-checked]")) {
     return;
   }
 

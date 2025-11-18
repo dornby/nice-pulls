@@ -1,10 +1,3 @@
-/**
- * Status update utilities for PR description templates
- */
-
-/**
- * Status definitions for the Lyriq Branch line
- */
 function updateLyriqStatus(content, newStatus) {
   const lyriqLineRegex = /(\n[ \t\u00a0]*♌️[ \t\u00a0]+\[Lyriq Branch\]\([^)]*\))[ \t]*\|[^\n]*/;
   const match = content.match(lyriqLineRegex);
