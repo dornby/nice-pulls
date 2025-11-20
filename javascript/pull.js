@@ -1,11 +1,14 @@
-async function onPaste() {
+async function onPaste(event) {
+  const pastedText = (event.clipboardData || window.clipboardData)?.getData('text') || '';
+  const hasLyriqBranchPaste = pastedText.includes(`${GITHUB_REPO_URL}/pull/`);
+
   setTimeout(async () => {
     const textArea = document.getElementsByName(SELECTORS.PR_BODY_TEXTAREA)[0];
     if (!textArea) return;
 
-    const hasLyriqBranchLink = textArea.value.includes(`[Lyriq Branch](${GITHUB_REPO_URL}/pull/`);
+    const hasLyriqBranchInBody = textArea.value.includes(`[Lyriq Branch](${GITHUB_REPO_URL}/pull/`);
 
-    if (hasLyriqBranchLink) {
+    if (hasLyriqBranchInBody && hasLyriqBranchPaste) {
       try {
         createLoadingNotification("Updating PR...");
         const pullID = getPullRequestId();
