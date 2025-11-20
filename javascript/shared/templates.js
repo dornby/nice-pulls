@@ -50,10 +50,14 @@ ${commitByCommitLine}${SPECS_LINE(specsPercentage)}
 | <video src=""> | <video src=""> |`;
 }
 
-function translationsText() {
+function translationsText(headBranch = '') {
   const completionCheckboxes = REQUIRED_LOCALES
     .map((locale, index) => `- [${index === 0 ? "x" : " "}] ${locale.flag}`)
     .join("\n");
+
+  const lyriqUrl = headBranch && GITHUB_REPO
+    ? `https://lyriq.itsgoti.me/${GITHUB_REPO}/tree/${headBranch}#editor`
+    : 'https://lyriq.itsgoti.me';
 
   return `> [!NOTE]
 > _This PR will not be merged onto main, it"s sole purpose is to receive Lyriq translations. The Lyriq commits will then be cherry-picked in the feature branch._
@@ -61,7 +65,7 @@ function translationsText() {
 ## Links
 \u00a0\u00a0👑\u00a0\u00a0\u00a0[Feature Branch]()
 \u00a0\u00a0💬\u00a0\u00a0\u00a0[Slack]()
-\u00a0\u00a0♌️\u00a0\u00a0\u00a0[Lyriq job]()
+\u00a0\u00a0♌️\u00a0\u00a0\u00a0[Lyriq job](${lyriqUrl})
 
 ## Completion
 ${completionCheckboxes}

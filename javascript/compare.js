@@ -64,7 +64,7 @@ async function onFormatPrButtonClick() {
     let body;
 
     if (isBranchTranslation) {
-      body = translationsText();
+      body = translationsText(headBranch);
     } else {
       const specsPercentage = calculateSpecsPercentageFromDOM();
       const commitCount = joinedCommitTitles ? joinedCommitTitles.split('\n').filter(t => t.trim()).length : 0;
