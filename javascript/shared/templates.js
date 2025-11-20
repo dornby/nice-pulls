@@ -68,14 +68,49 @@ ${completionCheckboxes}
 `;
 }
 
+function countYamlKeyChanges(patch) {
+  if (!patch) return { additions: 0, deletions: 0 };
+
+  const lines = patch.split('\n');
+  let additions = 0;
+  let deletions = 0;
+
+  for (const line of lines) {
+    // Match YAML key lines (e.g., "  key:" or "  key: value")
+    // Ignore lines that are just comments, empty, or diff markers
+    if (/^[+]\s+[\w_]+:/.test(line)) {
+      additions++;
+    } else if (/^[-]\s+[\w_]+:/.test(line)) {
+      deletions++;
+    }
+  }
+
+  return { additions, deletions };
+}
+
 function generateLocaleCompletionText(files) {
   const localeFiles = files.filter(
     file => file.filename.startsWith(LOCALES_PATH) && file.status !== "removed"
   );
 
+  // Find the English file to get the baseline key changes
+  const enFile = localeFiles.find(file => file.filename.endsWith(EN_YML));
+  const enChanges = countYamlKeyChanges(enFile?.patch);
+
   return REQUIRED_LOCALES
     .map(({ file: fileName, flag }) => {
-      const isComplete = localeFiles.some(file => file.filename.endsWith(fileName));
+      const localeFile = localeFiles.find(file => file.filename.endsWith(fileName));
+
+      if (!localeFile) {
+        return `- [ ] ${flag}`;
+      }
+
+      const localeChanges = countYamlKeyChanges(localeFile.patch);
+
+      // Check if locale file has matching key additions/deletions with en.yml
+      const isComplete = localeChanges.additions === enChanges.additions &&
+                        localeChanges.deletions === enChanges.deletions;
+
       return `- [${isComplete ? "x" : " "}] ${flag}`;
     })
     .join("\n") + "\n";
