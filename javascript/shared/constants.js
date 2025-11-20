@@ -1,6 +1,12 @@
-const GITHUB_REPO = "drivy/drivy-rails";
-const GITHUB_REPO_URL = `https://github.com/${GITHUB_REPO}`;
-const GITHUB_API_BASE = `https://api.github.com/repos/${GITHUB_REPO}`;
+// Extract repo from current URL (e.g., "drivy/drivy-rails" from "https://github.com/drivy/drivy-rails/...")
+const getRepoFromUrl = () => {
+  const match = window.location.pathname.match(/^\/([^\/]+\/[^\/]+)/);
+  return match ? match[1] : null;
+};
+
+const GITHUB_REPO = getRepoFromUrl();
+const GITHUB_REPO_URL = GITHUB_REPO ? `https://github.com/${GITHUB_REPO}` : '';
+const GITHUB_API_BASE = GITHUB_REPO ? `https://api.github.com/repos/${GITHUB_REPO}` : '';
 
 const TIMING = {
   PASTE_DELAY: 500,
