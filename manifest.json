@@ -19,7 +19,7 @@
         "javascript/shared/github-api.js",
         "javascript/shared/templates.js",
         "javascript/shared/specs-calculator.js",
-        "javascript/shared/commit-utils.js",
+        "javascript/shared/pr-description-utils.js",
         "javascript/compare.js"
       ],
       "run_at": "document_end"
@@ -32,7 +32,7 @@
         "javascript/shared/github-api.js",
         "javascript/shared/templates.js",
         "javascript/shared/specs-calculator.js",
-        "javascript/shared/commit-utils.js",
+        "javascript/shared/pr-description-utils.js",
         "javascript/shared/lyriq-status-updater.js",
         "javascript/shared/pr-refresh.js",
         "javascript/pull.js"
@@ -47,7 +47,7 @@
         "javascript/shared/github-api.js",
         "javascript/shared/templates.js",
         "javascript/shared/specs-calculator.js",
-        "javascript/shared/commit-utils.js",
+        "javascript/shared/pr-description-utils.js",
         "javascript/shared/lyriq-status-updater.js",
         "javascript/shared/pr-refresh.js",
         "javascript/index.js"

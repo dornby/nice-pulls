@@ -87,7 +87,6 @@ function replaceSpecsPercentage(textAreaContent, specsPercentage) {
 }
 
 function replaceLocaleCompletion(textAreaContent, completionText) {
-  const completionTitle = "## Completion\n";
-  const splitContent = textAreaContent.split(completionTitle);
-  return (splitContent[0] + completionTitle + completionText).replace(/\n$/, "");
+  completionSplit = textAreaContent.split("## Completion")
+  return completionSplit[0] + "## Completion\n" + completionText
 }
