@@ -2,15 +2,27 @@ let formatPrButton = null;
 
 function initializeAutoFormatButton() {
   const actionBar = document.querySelector(SELECTORS.COMPARE_ACTION_BAR);
-  if (!actionBar) return;
+  if (!actionBar) {
+    console.error('[Nice Pulls] Action bar not found');
+    return;
+  }
 
   const createPrButton = actionBar.children[0];
-  if (!createPrButton) return;
+  if (!createPrButton) {
+    console.error('[Nice Pulls] Create PR button not found in action bar');
+    return;
+  }
 
   const baseRefSelector = document.querySelector(SELECTORS.BASE_REF_SELECTOR);
-  if (!baseRefSelector) return;
+  if (!baseRefSelector) {
+    console.error('[Nice Pulls] Base ref selector not found');
+    return;
+  }
 
-  if (actionBar.querySelector("[data-nice-pulls-button]")) return;
+  if (actionBar.querySelector("[data-nice-pulls-button]")) {
+    console.debug('[Nice Pulls] Auto-format button already initialized');
+    return;
+  }
 
   const titleInput = document.querySelector(SELECTORS.PR_TITLE_INPUT);
   const headBranch = getHeadRefName("compare");
