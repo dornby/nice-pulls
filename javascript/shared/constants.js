@@ -34,7 +34,7 @@ const SELECTORS = {
   DIFFSTAT: ".diffstat",
   TRUNCATE_LINK: ".Truncate a",
   COMMIT_TITLE: ".Link--primary.text-bold.js-navigation-open.markdown-title",
-  COMPARE_ACTION_BAR: ".d-flex.my-2.mx-md-2.flex-md-justify-end"
+  CREATE_PR_BUTTON: ".hx_create-pr-button"
 };
 
 const COMMIT_BY_COMMIT_LINE = "\u00a0\u00a0🪜\u00a0\u00a0\u00a0_Commit by commit_";

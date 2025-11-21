@@ -1,17 +1,14 @@
 let formatPrButton = null;
 
 function initializeAutoFormatButton() {
-  const actionBar = document.querySelector(SELECTORS.COMPARE_ACTION_BAR);
-  if (!actionBar) {
-    console.error('[Nice Pulls] Action bar not found');
+  const createPrButton = document.querySelector(SELECTORS.CREATE_PR_BUTTON);
+  if (!createPrButton) {
+    console.error('[Nice Pulls] Create PR button not found');
     return;
   }
 
-  const createPrButton = actionBar.children[0];
-  if (!createPrButton) {
-    console.error('[Nice Pulls] Create PR button not found in action bar');
-    return;
-  }
+  const createPrButtonContainer = createPrButton.parentElement;
+  const actionBar = createPrButtonContainer.parentElement;
 
   const baseRefSelector = document.querySelector(SELECTORS.BASE_REF_SELECTOR);
   if (!baseRefSelector) {
@@ -33,7 +30,7 @@ function initializeAutoFormatButton() {
     titleInput.setSelectionRange(titleInput.value.length, titleInput.value.length);
   }
 
-  actionBar.insertAdjacentHTML("afterbegin", createPrButton.outerHTML);
+  actionBar.insertAdjacentHTML("afterbegin", createPrButtonContainer.outerHTML);
   const formatPrButtonGroup = actionBar.children[0];
 
   if (formatPrButtonGroup.children.length > 1) {
