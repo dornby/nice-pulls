@@ -1,11 +1,20 @@
 function initRefreshCheckedButton() {
+  // Only run on the assigned PRs page
+  if (!window.location.pathname.includes('/pulls/assigned/')) {
+    console.debug('[Nice Pulls] Not on assigned PRs page, skipping refresh button');
+    return;
+  }
+
   const newPrButton = document.querySelector(SELECTORS.NEW_PR_BUTTON);
   if (!newPrButton || document.querySelector("[data-nice-pulls-refresh-checked]")) {
     return;
   }
 
   const buttonContainer = newPrButton.parentElement;
-  if (!buttonContainer) return;
+  if (!buttonContainer) {
+    console.error('[Nice Pulls] Button container not found');
+    return;
+  }
 
   const refreshCheckedButton = document.createElement("button");
   refreshCheckedButton.className = "btn btn-sm";
