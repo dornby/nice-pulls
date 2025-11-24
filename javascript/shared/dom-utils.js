@@ -154,3 +154,40 @@ function hasEnYmlInDOM() {
     return filename.endsWith(EN_YML) && filename.startsWith(LOCALES_PATH);
   });
 }
+
+function getLocaleFilesFromDOM() {
+  const localeFiles = [];
+
+  // Find all file diff containers
+  const fileDiffs = document.querySelectorAll(SELECTORS.DIFF_FILE);
+
+  fileDiffs.forEach((fileContainer) => {
+    const filename = fileContainer.getAttribute('data-tagsearch-path');
+
+    if (filename && filename.startsWith(LOCALES_PATH) && filename.endsWith('.yml')) {
+      // Extract the diff content from the file container
+      const diffLines = fileContainer.querySelectorAll('tr');
+      const patchLines = [];
+
+      diffLines.forEach((line) => {
+        const additionCell = line.querySelector('td.blob-code.blob-code-addition');
+        const deletionCell = line.querySelector('td.blob-code.blob-code-deletion');
+
+        if (additionCell) {
+          const text = additionCell.textContent || '';
+          patchLines.push('+' + text);
+        } else if (deletionCell) {
+          const text = deletionCell.textContent || '';
+          patchLines.push('-' + text);
+        }
+      });
+
+      localeFiles.push({
+        filename,
+        patch: patchLines.join('\n')
+      });
+    }
+  });
+
+  return localeFiles;
+}

@@ -50,8 +50,8 @@ ${commitByCommitLine}${SPECS_LINE(specsPercentage)}
 | <video src=""> | <video src=""> |`;
 }
 
-function translationsText(headBranch = '') {
-  const completionCheckboxes = REQUIRED_LOCALES
+function translationsText(headBranch = '', completionText = null) {
+  const completionCheckboxes = completionText || REQUIRED_LOCALES
     .map((locale, index) => `- [${index === 0 ? "x" : " "}] ${locale.flag}`)
     .join("\n");
 
@@ -94,7 +94,7 @@ function countYamlKeyChanges(patch) {
 
 function generateLocaleCompletionText(files) {
   const localeFiles = files.filter(
-    file => file.filename.startsWith(LOCALES_PATH) && file.status !== "removed"
+    file => file.filename.startsWith(LOCALES_PATH) && (!file.status || file.status !== "removed")
   );
 
   // Find the English file to get the baseline key changes
