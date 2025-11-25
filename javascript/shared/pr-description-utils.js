@@ -54,6 +54,7 @@ function replaceCommitsWith(commits, textAreaContent) {
 
   const newCommitsContent = commits
     .map(c => c.commit.message)
+    .filter(msg => !msg.startsWith("Translation update from Lyric"))
     .filter(msg => shouldAddCommit(commitsContent, msg))
     .map(msg => `\n### ${msg}`)
     .join("");
