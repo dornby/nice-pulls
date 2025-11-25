@@ -60,7 +60,7 @@ function translationsText(headBranch = '', completionText = null) {
     : 'https://lyriq.itsgoti.me';
 
   return `> [!NOTE]
-> _This PR will not be merged onto main, it"s sole purpose is to receive Lyriq translations. The Lyriq commits will then be cherry-picked in the feature branch._
+> _This PR is intended solely for receiving Lyriq translations and will not be merged to main. Translation commits will be cherry-picked into the feature branch._
 
 ## Links
 \u00a0\u00a0👑\u00a0\u00a0\u00a0[Feature Branch]()
