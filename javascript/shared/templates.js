@@ -110,6 +110,7 @@ function generateLocaleCompletionText(files) {
       }
 
       const localeChanges = countYamlKeyChanges(localeFile.patch);
+      console.log(`Locale: ${fileName}, Additions: ${localeChanges.additions}, Deletions: ${localeChanges.deletions}`);
 
       // Check if locale file has matching key additions/deletions with en.yml
       const isComplete = localeChanges.additions === enChanges.additions &&
