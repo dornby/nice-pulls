@@ -31,7 +31,7 @@ function initRefreshButton() {
     return;
   }
 
-  const editButton = actions.children[1].children[0];
+  const editButton = actions.children[0];
   if (!editButton) return;
 
   const refreshButtonGroup = createStyledButton(editButton, "Refresh desc", async () => {

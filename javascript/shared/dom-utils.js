@@ -1,6 +1,5 @@
 function createStyledButton(sourceButton, buttonText, clickHandler) {
   const buttonGroup = document.createElement("div");
-  buttonGroup.className = 'd-flex gap-2';
   buttonGroup.innerHTML = sourceButton.outerHTML;
 
   const button = buttonGroup.children[0];

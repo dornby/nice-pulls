@@ -26,7 +26,7 @@ const SELECTORS = {
   HEAD_REF_SELECTOR: "#head-ref-selector",
   BUTTON_LABEL: ".Button-label",
   HEAD_REF_CLASS: ".head-ref",
-  GH_HEADER_ACTIONS: ".prc-PageHeader-Actions-wawWm",
+  GH_HEADER_ACTIONS: ".gh-header-actions",
   NEW_PR_BUTTON: "a[href*='/compare']",
   PR_LIST_ITEM: ".js-navigation-item .Link--primary",
   SELECTED_PR_ROW: ".js-issue-row.selected",
