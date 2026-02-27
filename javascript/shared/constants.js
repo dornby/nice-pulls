@@ -21,7 +21,7 @@ const THEME = {
 
 const SELECTORS = {
   PR_BODY_TEXTAREA: "pull_request[body]",
-  PR_TITLE_INPUT: "#pull_request_title",
+  PR_TITLE_INPUT: "pull_request[title]",
   BASE_REF_SELECTOR: "#base-ref-selector",
   HEAD_REF_SELECTOR: "#head-ref-selector",
   BUTTON_LABEL: ".Button-label",

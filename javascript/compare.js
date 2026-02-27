@@ -65,7 +65,7 @@ async function onFormatPrButtonClick() {
     const isBranchTranslation = isTranslationBranch(headBranch);
     const isBranchFix = isFixBranch(headBranch);
 
-    const titleInput = document.querySelector(SELECTORS.PR_TITLE_INPUT);
+    const titleInput = document.getElementsByName(SELECTORS.PR_TITLE_INPUT)[0];
     const joinedCommitTitles = extractCommitTitlesFromDOM();
     const includeLyriq = hasEnYmlInDOM();
 
