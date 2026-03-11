@@ -21,13 +21,36 @@ function initializeAutoFormatButton() {
     return;
   }
 
-  const titleInput = document.querySelector(SELECTORS.PR_TITLE_INPUT);
+  const titleInput = document.getElementsByName(SELECTORS.PR_TITLE_INPUT)[0];
   const headBranch = getHeadRefName("compare");
 
   if (isTranslationBranch(headBranch) && titleInput) {
-    titleInput.value = "♌️ ";
-    titleInput.focus();
-    titleInput.setSelectionRange(titleInput.value.length, titleInput.value.length);
+    const desiredValue = "♌️ ";
+    let userHasEdited = false;
+
+    const applyValue = () => {
+      const nativeSetter = Object.getOwnPropertyDescriptor(window.HTMLInputElement.prototype, 'value').set;
+      nativeSetter.call(titleInput, desiredValue);
+      titleInput.dispatchEvent(new Event('input', { bubbles: true }));
+      titleInput.focus();
+      titleInput.setSelectionRange(desiredValue.length, desiredValue.length);
+    };
+
+    applyValue();
+
+    titleInput.addEventListener('input', () => { userHasEdited = true; }, { once: true });
+
+    const interval = setInterval(() => {
+      if (userHasEdited || !document.contains(titleInput)) {
+        clearInterval(interval);
+        return;
+      }
+      if (titleInput.value !== desiredValue) {
+        applyValue();
+      }
+    }, 300);
+
+    setTimeout(() => clearInterval(interval), 5000);
   }
 
   actionBar.insertAdjacentHTML("afterbegin", createPrButtonContainer.outerHTML);
