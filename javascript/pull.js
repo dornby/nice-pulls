@@ -31,7 +31,7 @@ function initRefreshButton() {
     return;
   }
 
-  const editButton = actions.children[1].children[0];
+  const editButton = actions.querySelector("button");
   if (!editButton) return;
 
   const refreshButtonGroup = createStyledButton(editButton, "Refresh desc", async () => {
@@ -46,11 +46,7 @@ function initRefreshButton() {
   });
 
   const refreshButton = refreshButtonGroup.children[0];
-  refreshButton.ariaLabel = null;
-  refreshButton.dataset.gaClick = null;
   refreshButton.dataset.nicePullsRefresh = "true";
-  refreshButton.classList.remove("js-details-target", "js-title-edit-button");
-  refreshButton.classList.add("Button--secondary", "Button--small", "Button", "m-0", "mr-md-0");
 
   actions.insertAdjacentElement("afterbegin", refreshButtonGroup);
 }

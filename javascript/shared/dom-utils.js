@@ -1,28 +1,42 @@
 function createStyledButton(sourceButton, buttonText, clickHandler) {
   const buttonGroup = document.createElement("div");
   buttonGroup.className = 'd-flex gap-2';
-  buttonGroup.innerHTML = sourceButton.outerHTML;
 
-  const button = buttonGroup.children[0];
-  button.innerText = buttonText;
+  const button = document.createElement("button");
   button.type = "button";
-  button.classList.remove("hx_create-pr-button");
+  button.dataset.component = "Button";
+  button.dataset.size = sourceButton.dataset.size || "medium";
+  button.dataset.variant = "default";
+  button.dataset.loading = "false";
+
+  // Copy only the generic base class, skipping module-specific ones
+  const baseClass = Array.from(sourceButton.classList).find(c => c.includes("ButtonBase"));
+  if (baseClass) button.classList.add(baseClass);
+
+  // Mirror GitHub's button inner structure so sizing CSS applies correctly
+  const contentEl = sourceButton.querySelector('[data-component="buttonContent"]');
+  const contentSpan = document.createElement("span");
+  contentSpan.dataset.component = "buttonContent";
+  contentSpan.dataset.align = "center";
+  if (contentEl) contentSpan.className = contentEl.className;
+
+  const textEl = sourceButton.querySelector('[data-component="text"]');
+  const textSpan = document.createElement("span");
+  textSpan.dataset.component = "text";
+  if (textEl) textSpan.className = textEl.className;
+  textSpan.textContent = buttonText;
+
+  contentSpan.appendChild(textSpan);
+  button.appendChild(contentSpan);
+  buttonGroup.appendChild(button);
 
   applyPurpleButtonStyle(button);
-  cleanButtonDataAttributes(button);
 
   if (clickHandler) {
     button.addEventListener("click", clickHandler);
   }
 
   return buttonGroup;
-}
-
-function cleanButtonDataAttributes(button) {
-  delete button.dataset.hydroClick;
-  delete button.dataset.hydroClickHmac;
-  delete button.dataset.disableInvalid;
-  delete button.dataset.disableWith;
 }
 
 function applyPurpleButtonStyle(button) {
