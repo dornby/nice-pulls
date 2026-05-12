@@ -140,6 +140,16 @@ function createLoadingNotification(message, options = {}) {
   };
 }
 
+function cleanButtonDataAttributes(button) {
+  const keep = new Set(['data-nice-pulls-button', 'data-component', 'data-size', 'data-variant', 'data-loading']);
+  const toRemove = Array.from(button.attributes)
+    .map(a => a.name)
+    .filter(name => name.startsWith('data-') && !keep.has(name));
+  toRemove.forEach(name => button.removeAttribute(name));
+  button.removeAttribute('formaction');
+  button.removeAttribute('form');
+}
+
 function initializeWithObserver(initFunction, options = {}) {
   const {
     target = document.querySelector("main") || document.body,
